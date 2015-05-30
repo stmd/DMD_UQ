@@ -31,7 +31,8 @@ pbsfilename = [newdir '/pbsbase.dat'];
 UQparams = x';
 save(strcat(newdir, '/params.out'), 'UQparams', '-ascii');
 % Call function to compute DMD eigenvalue statistics
-str = 'matlab -nodesktop -nodisplay -nosplash -r "calcDMDEvalStats(newdir); exit"';
+system(['echo "cd ' newdir  '" >> ' pbsfilename ]);
+str = 'matlab -nodesktop -nodisplay -nosplash -r "calcDMDEvalStats(); exit"';
 fid = fopen('pbsbase.dat','a');
 fprintf(fid,'%s',str);
 fprintf(fid,'\n');

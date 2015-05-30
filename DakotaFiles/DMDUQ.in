@@ -13,11 +13,13 @@ method
     p_refinement  dimension_adaptive  generalized
     max_iterations = 500
     max_function_evaluations = 500
-    convergence_tolerance = 1.0e-3
+    convergence_tolerance = 1.0e-4
     sparse_grid_level = 1
     samples = 10000
     seed = 12347 rng rnum2
     probability_levels =
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
     .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
     .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
     .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
@@ -48,7 +50,7 @@ interface
           file_save	
 
 responses
-  response_functions = 8
-  descriptors = 'Mean1' 'C1xx' 'C1xy' 'C1yy' 'Mean2' 'C2xx' 'C2xy' 'C2yy'
+  response_functions = 10
+  descriptors = 'MeanReal1' 'MeanImag1' 'Cxx1' 'Cxy1' 'Cyy1' 'MeanReal2' 'MeanImag2' 'Cxx2' 'Cxy2' 'Cyy2'
   no_gradients
   no_hessians
