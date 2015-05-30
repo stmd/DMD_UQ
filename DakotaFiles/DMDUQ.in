@@ -1,0 +1,54 @@
+# Dakota Input File: DMDUQ.in
+# INPUTS:  Bias and scaling of the noise on each channel
+# OUTPUTS: Mean and covariance of the distribution of each DMD eigenvalue
+
+
+environment
+    graphics
+    tabular_graphics_data
+	tabular_graphics_file = 'DMDUQ.dat'
+
+method
+  polynomial_chaos
+    p_refinement  dimension_adaptive  generalized
+    max_iterations = 500
+    max_function_evaluations = 500
+    convergence_tolerance = 1.0e-3
+    sparse_grid_level = 1
+    samples = 10000
+    seed = 12347 rng rnum2
+    probability_levels =
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    .05 .1 .2 .3 .4 .5 .6 .7 .8 .9 .95
+    variance_based_decomp #interaction_order = 1
+    export_expansion_file = 'PCEOutputCoeffs.dat'
+
+variables
+  uniform_uncertain = 4
+    lower_bounds      =  -1. -1. 0. 0.
+    upper_bounds      =   1.  1. 2. 2.
+    descriptors       = 'Mean1' 'Mean2' 'Sigma1' 'Sigma2'
+
+interface
+	system
+	  asynchronous  #evaluation_concurrency = 10 # is this needed?
+	  analysis_driver = 'DMDUQ.sh'
+	  parameters_file = 'params.in'
+	  results_file    = 'results.out'
+	  work_directory directory_tag named 'workdir'   # creates a temporary directory for each solution,
+	  template_directory = 'templatedir' copy  # and copies the contents of templatedir to it.
+	  directory_save  # don't delete the temp directory
+          file_tag
+          file_save	
+
+responses
+  response_functions = 8
+  descriptors = 'Mean1' 'C1xx' 'C1xy' 'C1yy' 'Mean2' 'C2xx' 'C2xy' 'C2yy'
+  no_gradients
+  no_hessians
