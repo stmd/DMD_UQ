@@ -1,0 +1,17 @@
+*.aux
+*.glo
+*.log
+*.out
+*.pdfsync
+*.synctex.gz
+*.bbl
+*.blg
+*-eps-converted-to.pdf
+auto
+MatPlotLib/*/*/*.eps
+MatPlotLib/*/*/*.png
+#Makefile#
+*~
+*.dvi
+*.ps
+DMD_UQ.pdf

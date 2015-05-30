@@ -1,0 +1,204 @@
+\documentclass{aiaa-tc}% insert '[draft]' option to show overfull boxes
+
+\usepackage{wrapfig}% embedding figures/tables in text (i.e., Galileo style)
+\usepackage{threeparttable}% tables with footnotes
+\usepackage{dcolumn}% decimal-aligned tabular math columns
+\newcolumntype{d}{D{.}{.}{-1}}
+\usepackage{nomencl}% automatic nomenclature generation via makeindex
+\makeglossary
+\usepackage{subfigure}% subcaptions for subfigures
+\usepackage{subfigmat}% matrices of similar subfigures, aka small mulitples
+\usepackage{fancyvrb}% extended verbatim environments
+\fvset{fontsize=\footnotesize,xleftmargin=2em}
+\usepackage{lettrine}% dropped capital at beginning of paragraph
+%\usepackage[dvips]{dropping}% alternative dropped capital package
+
+\usepackage{booktabs}
+\usepackage{bm, amssymb, amsmath, array, pdfpages}
+\usepackage{amsmath,amssymb,color,graphicx,pdfsync,overpic,color,epstopdf,rotating,dashrule,float,bm}
+\usepackage{float}
+\usepackage{hyperref}
+
+\usepackage{setspace}
+%\doublespacing
+\usepackage{comment}
+\usepackage{changepage}
+
+\usepackage{titlesec}
+
+\graphicspath{{Figures/}}
+
+\title{Quantifying the Effects of Sensor Noise on Dynamic Mode Decomposition Models}
+
+\author{%
+  Scott Dawson\thanks{Department of Mechanical and Aerospace
+    Engineering; Student Member, AIAA.}
+  \ ,
+  Anthony M. DeGennaro\thanks{Department of Mechanical and Aerospace
+    Engineering; Student Member, AIAA.}
+  \ ,
+  Clarence W. Rowley\thanks{Department of Mechanical and Aerospace Engineering;
+    Associate Fellow, AIAA.}\\
+  {\normalsize\itshape
+   Princeton University, Princeton, NJ, 08540, USA}\\
+   %{\normalsize \copyright~2014 by the authors. Do not distribute without permission.}
+ }
+
+ \AIAApapernumber{200?-????}
+ \AIAAconference{Conference Name, Date, and Location}
+ \AIAAcopyright{\AIAAcopyrightD{200?}}
+
+ % define some commands to maintain consistency
+ \newcommand{\pkg}[1]{\texttt{#1}}
+ \newcommand{\cls}[1]{\textsf{#1}}
+ \newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\cwrremark}[1]{\textcolor{blue}{[CWR: #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\CLmax}{{C_L}_\text{max}}
+\newcommand{\LDmax}{L/D_\text{max}}
+\newcommand{\alphamax}{\alpha_\text{max}}
+\newcommand*{\mat}[1]{{\bf{#1}}}
+\def\ip<#1,#2>{\left\langle #1,#2\right\rangle}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  The purpose of this study is to explore and quantify the statistical
+  effect that sensor noise has on system identification. Specifically,
+  we are interested in linear models empirically identified using
+  Dynamic Mode Decomposition (DMD), and the effects that noise of
+  varying bias and strength can have on the eigenvalues of that linear
+  system. We propose a framework for investigating this, drawing our
+  tools from the uncertainty quantification (UQ) community.
+
+\end{abstract}
+
+\section{Introduction}
+
+[Some shit about DMD, how it is affected by noise, why that is
+  important to study, etc... big picture stuff.]
+
+\section{System Identification using Dynamic Mode Decomposition (DMD)}
+
+[Scott can write some standard shit here, just to introduce the
+  tools/concepts].
+
+\section{Uncertainty Quantification using Polynomial Chaos Expansions (PCE)}
+
+We would like to vary the bias and strength of noise on different
+combinations of states and quantify how this affects the eigenvalues
+of the DMD matrix. Additionally, we would like to obtain a surrogate
+model that explicitly describes this input-output behavior, which can
+be inexpensively sampled and analyzed for statistical correlations and
+trends. As a result of these requirements, we choose to use Polynomial
+Chaos Expansions (PCE) as our framework for performing UQ.
+
+We give a brief overview of this approach below; further details can
+be found in introductory references on PCE
+methods\cite{ghanem_book,xiu_book,lemaitre}.
+
+Let~$Z=(Z_1,\ldots,Z_d)$ be a vector of random variables that
+parameterize the uncertain quantities in the sensor noise. We are
+interested in the corresponding uncertainty of an aerodynamic
+quantity, represented by $y(Z)$.  In our setting, $Z$ are the mean and
+variance of the noise present on each state, and $y(Z)$ will be the
+mean and covariance of the DMD eigenvalues.
+
+The goal of the method is to represent $y(Z)$ in terms of some basis
+functions~$\Phi_i$. Assuming (for ease of exposition) that $y(Z)$ is
+scalar-valued, we write:
+\begin{equation}
+  \label{eq:1}
+  y(Z) = \sum_{|i|=0}^N y_i \Phi_i(Z).
+\end{equation}
+Here, $i=(i_1,\ldots,i_d)$ is a multi-index, and $|i|=\sum_{j=1}^d i_j$.  We define an inner
+product on the space of functions of the random variables by
+\begin{equation}
+  \label{eq:2}
+  \ip<f,g> = \int_\Gamma f(Z) g(Z) \rho(Z)\,dZ,
+\end{equation}
+where $\rho(Z)$ denotes the probability density function of $Z$, and
+has support $\Gamma$.  A fundamental insight in PCE methods is to
+employ basis functions that are orthonormal with respect to this
+inner product, so that
+\begin{equation}
+  \label{eq:3}
+  \ip<\Phi_i,\Phi_j> = \delta_{ij},
+\end{equation}
+where $\delta_{ij}=1$ if $i=j$, and $0$ if $i\ne j$. In particular,
+a multivariate basis polynomial $\Phi_i$ may be written as
+\begin{equation}
+\Phi_i(Z) = \prod_{k=1}^d \phi_{i_k}(Z_k),
+\end{equation}
+where $\phi_n$ is a (univariate) polynomial of degree~$n$. The $\{ \phi_n\}$ will be a basis of
+orthogonal polynomials chosen so that the orthogonality
+condition~\eqref{eq:3} is satisfied. In this paper, we work
+exclusively with uniformly distributed random variables, and so our
+basis polynomials are the multivariate Legendre polynomials.
+
+The coefficients $y_i$ in the expansion~\eqref{eq:1} may be determined
+by taking an inner product with $\Phi_j$: because the $\Phi_j$ are
+orthonormal, we have
+\begin{equation}
+  \label{eq:4}
+  y_j = \ip<y,\Phi_j>.
+\end{equation}
+Note that one could also take $y(Z)$ to be a vector of several different
+aerodynamic quantities of interest: in this case, the coefficients~$y_i$ in the
+expansion~\eqref{eq:1} are vectors, and each component of $y_i$ is determined by
+an equation such as~\eqref{eq:4}, for the corresponding component of~$y$.
+
+The important issue now is how we choose to approximate the projection
+integrals in~\eqref{eq:4}. A possible choice is to use Gauss
+quadrature, in which the function $y(Z)$ is evaluated on a grid
+consisting of the tensor product of $n$ separate 1-D quadrature point
+sets in parameter space. However, this method suffers from the
+curse of dimensionality, since the number of required samples grows
+exponentially with the dimension~$n$.
+
+A commonly used alternative is to use sparse grid methods\cite{Smolyak}, in
+which the number of grid points used is lessened by using only a subset of the
+full tensor product.
+%
+Another advantage is that anisotropic
+adaptive $p$-refinement of the mesh is possible, since nested 1-D
+nodes are used. In an adaptive setting, global sensitivities are
+calculated using total Sobol indices, which are defined for each
+parameter as:
+\begin{equation}
+T_i = \frac{\mathbb{E} [ Var(y|Z_{-i}) ]}{Var(y)},\qquad i = 1,\ldots,d,
+\label{eq:sobol}
+\end{equation}
+Here,
+$Var(y|Z_{-i})$ denotes the variance of $y(Z)$ given all parameters
+except $Z_i$. This is a measure of ``how much'' parameter $Z_i$
+contributes to the total variance of $y(Z)$ on average. Parameters
+that have higher Sobol indices contribute more to the variance of the
+response and hence require more refinement than parameters with lower
+Sobol indices.
+
+Further details on the sparse grid approach can be found in standard
+references\cite{lemaitre,Gerstner:SparseGrids}. In our study, we compute the
+sparse grids using DAKOTA, an
+open-source code for optimization and UQ developed by Sandia National
+Laboratory~\cite{Dakota}.
+
+\section{Quantifying the Effect of Sensor Noise on DMD Eigenvalues}
+
+Basically, just make the point that our inputs in the UQ framework are
+the bias and scaling of a multivariate noise distribution (eg.,
+Gaussian) defined over all of our states, and the outputs are some
+measures of the empirical eigenvalue statistics (eg., mean and
+covariance in the complex plane of the eigenvalue locations).
+
+I can even hash together a simple example if I get my shit together.
+
+
+
+\bibliographystyle{aiaa}	% (uses file "plain.bst")
+\bibliography{DMDUQreferences}		% expects file "gPC_Bib.bib"
+
+\end{document}
