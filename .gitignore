@@ -16,3 +16,6 @@ MatPlotLib/*/*/*.png
 *.ps
 DMD_UQ.pdf
 DakotaFiles/workdir.*
+DakotaFiles/DMDUQ.dat
+DakotaFiles/S4
+DakotaFiles/dakota.rst
