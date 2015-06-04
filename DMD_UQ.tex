@@ -31,10 +31,10 @@
 \title{Quantifying the Effects of Sensor Noise on Dynamic Mode Decomposition Models}
 
 \author{%
-  Scott Dawson\thanks{Department of Mechanical and Aerospace
+  Anthony M. DeGennaro\thanks{Department of Mechanical and Aerospace
     Engineering; Student Member, AIAA.}
   \ ,
-  Anthony M. DeGennaro\thanks{Department of Mechanical and Aerospace
+  Scott Dawson\thanks{Department of Mechanical and Aerospace
     Engineering; Student Member, AIAA.}
   \ ,
   Clarence W. Rowley\thanks{Department of Mechanical and Aerospace Engineering;
@@ -78,10 +78,27 @@
 
 \section{Introduction}
 
-[Some shit about DMD, how it is affected by noise, why that is
-  important to study, etc... big picture stuff.]
+With the recent surge in quantity of data that can be quickly generated
+across a wide range of fields, the development of efficient and robust algorithms to extract useful information algorithms.
+
+For the case when data contains dynamic content (i.e., is time resolved, and most often is assumed to come from or be approximated by some form of differential equation), techniques such as dynamic mode decomposition (DMD)\cite{} are increasingly popular. 
+
+It has been previously observed that the results of applying the DMD algorithm are sensitive to noise in the data\cite{}, which potentially limits the valid and confidence in such results. This sensitivity was subsequently shown to be largely (at least for certain cases) due to a bias present in the algorithm, which may be removed through any one of a number of modifications\cite{}.
+Even with such improved algorithms, noisy data will still affect rests, and thus it is important to rigorously quantify the confidence in the result of applying DMD to imperfect data. 
+
+Most broadly, this is broadly similar to any uncertainty quantification problem: we wish to know how uncertainty in the initial data propagates through to uncertainty in the outputs of DMD (e.g., the DMD eigenvalues and modes).
+
+
+
+
+%[Some shit about DMD, how it is affected by noise, why that is
+%  important to study, etc... big picture stuff.]
 
 \section{System Identification using Dynamic Mode Decomposition (DMD)}
+
+Assume that we have data that 
+
+
 
 [Scott can write some standard shit here, just to introduce the
   tools/concepts].
@@ -189,15 +206,15 @@ Laboratory~\cite{Dakota}.
 \section{Quantifying the Effect of Sensor Noise on DMD Eigenvalues}
 
 Basically, just make the point that our inputs in the UQ framework are
-the bias and scaling of a multivariate noise distribution (eg.,
+the bias and scaling of a multivariate noise distribution (e.g.,
 Gaussian) defined over all of our states, and the outputs are some
-measures of the empirical eigenvalue statistics (eg., mean and
+measures of the empirical eigenvalue statistics (e.g., mean and
 covariance in the complex plane of the eigenvalue locations).
 
 I can even hash together a simple example if I get my shit together.
 
 
-
+Data -> matrix pseudospectra
 \bibliographystyle{aiaa}	% (uses file "plain.bst")
 \bibliography{DMDUQreferences}		% expects file "gPC_Bib.bib"
 
