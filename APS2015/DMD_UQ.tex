@@ -49,7 +49,7 @@
 \newcommand\etal{\mbox{\textit{et al.}}}
 \newcommand\etc{etc.\ }
 \newcommand\eg{e.g.\ }
-\title{Quantifying the Effects of Sensor Noise on Dynamic Mode Decomposition Models}
+\title{Uncertainty quantification of the dynamic mode decomposition}
 
 \author{%
   Anthony M. DeGennaro, 
@@ -76,35 +76,40 @@
 
 \maketitle
 
-\begin{abstract}
- This study is to explores and quantifies the statistical
-  effect that parameterized uncertainty has on system
-  identification. Specifically, we focus on the dynamic mode decomposition (DMD), and consider
-  the effects that statistical variation in governing parameters
-  can have on identified quantities such as DMD modes and eigenvalues. 
+%\begin{abstract}
+ This work explores and quantifies the statistical effect that parameterized uncertainty has on the dynamic mode decomposition (DMD).
+  For the data under consideration, such uncertain parameters could include Reynolds number, geometry, or indeed random noise in the system.
+  % , and consider
+ % the effects that statistical variation in governing parameters
+%  can have on identified quantities such as DMD modes and eigenvalues. 
+  The aims of this study are twofold: firstly, to quantify the robustness of the algorithm in terms of pertinent identified quantities (such as DMD modes and eigenvalues), 
+  and secondly, to present a method for analyzing the underlying dynamic systems from data in an efficient manner.
+  %Focusing on the outputs of DMD, rather than the original data, allows us to study both the robustness of the algorithm, and 
   %Much is known
   %about how to identify linear models from data collected from a
   %particular dynamical system using DMD; what we wish to investigate
   %is how these models vary given some prescribed statistical
   %uncertainty in governing parameters, such . 
-  We propose a framework for
-  investigating this, which is borrowed from the uncertainty
+  We present a framework that is borrowed from the uncertainty
   quantification (UQ) community, called polynomial chaos expansions
-  (PCE). This method is advantageous for two reasons. First, PCE
-  methods can be computationally more efficient than sample-based
+  (PCE). 
+  %This method is advantageous for two reasons. 
+   PCE methods can be computationally more efficient than sample-based
   methods (e.g., Monte Carlo) at when the dimensionality of the
-  parameter space is moderate. Second, PCE methods yield a polynomial
+  parameter space is moderate. Additionally, PCE methods yield a polynomial
   function for a surrogate model, which makes trivial tasks such as
   evaluating the surrogate, investigating statistical trends, and
   evaluating sensitivities.
-  We demonstrate our method on a number of well-studied example systems, including data from the 
-  Stuart-Landau equation, and DNS data for 2-D flow past a circular
-  cylinder. 
+  We demonstrate our methodology on a number of well-studied example systems, including
+ numerical simulations of flow past a circular cylinder.
+  %including data from the 
+  %Stuart-Landau equation, and DNS data for 2-D flow past a circular
+  %cylinder. 
  % These examples are chosen because they have been
   %extensively studied (thus making it easy to assess the efficacy
   %of our method) have dynamical behavior which varies as
   %certain governing parameters are changed.
 
-\end{abstract}
+%\end{abstract}
 
 \end{document}
