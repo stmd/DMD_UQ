@@ -1,0 +1,94 @@
+\documentclass{article}% insert '[draft]' option to show overfull boxes
+
+\usepackage{wrapfig}% embedding figures/tables in text (i.e., Galileo style)
+\usepackage{threeparttable}% tables with footnotes
+\usepackage{dcolumn}% decimal-aligned tabular math columns
+\newcolumntype{d}{D{.}{.}{-1}}
+\usepackage{nomencl}% automatic nomenclature generation via makeindex
+\makeglossary
+\usepackage{subfigure}% subcaptions for subfigures
+\usepackage{subfigmat}% matrices of similar subfigures, aka small mulitples
+\usepackage{fancyvrb}% extended verbatim environments
+\fvset{fontsize=\footnotesize,xleftmargin=2em}
+\usepackage{lettrine}% dropped capital at beginning of paragraph
+%\usepackage[dvips]{dropping}% alternative dropped capital package
+
+\usepackage{booktabs}
+\usepackage{bm, amssymb, amsmath, array, pdfpages}
+\usepackage{amsmath,amssymb,color,graphicx,pdfsync,overpic,color,epstopdf,rotating,dashrule,float,bm}
+\usepackage{float}
+\usepackage{hyperref}
+
+\usepackage{setspace}
+%\doublespacing
+\usepackage{comment}
+\usepackage{changepage}
+
+\usepackage{titlesec}
+
+\graphicspath{{Figures/}}
+
+\title{Quantifying the Effects of Sensor Noise on Dynamic Mode Decomposition Models}
+
+\author{%
+  Anthony M. DeGennaro\thanks{Department of Mechanical and Aerospace
+    Engineering; Student Member, AIAA.}
+  \ ,
+  Scott Dawson\thanks{Department of Mechanical and Aerospace
+    Engineering; Student Member, AIAA.}
+  \ ,
+  Clarence W. Rowley\thanks{Department of Mechanical and Aerospace Engineering;
+    Associate Fellow, AIAA.}\\
+  {\normalsize\itshape
+   Princeton University, Princeton, NJ, 08540, USA}\\
+   %{\normalsize \copyright~2014 by the authors. Do not distribute without permission.}
+ }
+
+ % define some commands to maintain consistency
+ \newcommand{\pkg}[1]{\texttt{#1}}
+ \newcommand{\cls}[1]{\textsf{#1}}
+ \newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\cwrremark}[1]{\textcolor{blue}{[CWR: #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\CLmax}{{C_L}_\text{max}}
+\newcommand{\LDmax}{L/D_\text{max}}
+\newcommand{\alphamax}{\alpha_\text{max}}
+\newcommand*{\mat}[1]{{\bf{#1}}}
+\def\ip<#1,#2>{\left\langle #1,#2\right\rangle}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  The purpose of this study is to explore and quantify the statistical
+  effect that parameterized uncertainty has on system
+  identification. Specifically, we are interested in linear models
+  empirically identified using Dynamic Mode Decomposition (DMD), and
+  the effects that statistical variation in the governing parameters
+  can have on the eigenvalues of that linear system. Much is known
+  about how to identify linear models from data collected from a
+  particular dynamical system using DMD; what we wish to investigate
+  is how these models vary given some prescribed statistical
+  uncertainty in governing parameters. We propose a framework for
+  investigating this, which is borrowed from the uncertainty
+  quantification (UQ) community, called Polynomial Chaos Expansions
+  (PCE). This method is advantageous for two reasons. First, PCE
+  methods can be computationally more efficient than sample-based
+  methods (eg. Monte Carlo) at when the dimensionality of the
+  parameter space is moderate. Second, PCE methods yield a polynomial
+  function for a surrogate model, which makes trivial tasks such as
+  evaluating the surrogate, investigating statistical trends,
+  evaluating sensitivities, etc.
+
+  We will demonstrate our method on some example systems, such as the
+  Stuart-Landau dynamical system, as well as 2-D flow past a
+  cylinder. These examples are chosen because they have been
+  extensively studied, which will make it easy to assess the efficacy
+  of our method. Both examples have dynamical behavior which varies as
+  certain governing parameters are changed.
+
+\end{abstract}
+
+\end{document}
