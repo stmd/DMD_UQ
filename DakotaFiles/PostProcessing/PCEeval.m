@@ -122,6 +122,11 @@ for i=1:means
     EIGS2 = [EIGS2; samples];
     i
 end
+% Plot density
+[N,C] = hist3([EIGS1; EIGS2],[100,100]);
+[CX,CY] = meshgrid(C{1},C{2});
+figure; contourf(CX',CY',N,100,'LineStyle','none')
+xlim([0.7,1.05]); ylim([-0.15,0.15]);
 
 %% Compute actual eigenvalue locations at sparse grid locations
 
@@ -168,6 +173,63 @@ for i=1:337
     i
 end
 
+%% Latin Hypercube sampling to verify PCE model
 
+% Set parameter bounds
+d = 4;
+lower = [-1 -1 0 0]';
+upper = [1 1 2 2]';
+% Initialize LHS samples
+samps = 1e3;
+LHS = lhsdesign(samps,d);
+XLHS = zeros(samps,d);
+for i=1:d
+    XLHS(:,i) = (upper(i)-lower(i))*LHS(:,i) + lower(i);
+end
+% Set up dynamical system
+Ac = [1 -2; 1 -1];
+dt = 0.1;
+A = expm(Ac*dt);
+x0 = [ 1; 0.1];
+Nsteps = 100;
+% LHS
+Eigs1 = [];
+Eigs2 = [];
+for j=1:samps
+    x = zeros(2,Nsteps);
+    x(:,1) = x0;
+    % Attain noise-free data
+    for kk = 1:(Nsteps-1)
+        x(:,kk+1) = A*x(:,kk);
+    end
+    % Monte Carlo trials
+    r = 2;
+    Ntrials = 500;
+    s = 0.2; %noise level
+    EigsTLS = zeros(2,Ntrials);
+    for nn = 1:Ntrials
+        Noise = s*randn(size(x));
+        % Bias/scale the noise
+        Noise(1,:) = XLHS(j,1) + XLHS(j,3)*Noise(1,:);
+        Noise(2,:) = XLHS(j,2) + XLHS(j,4)*Noise(2,:);
+        xn = x + Noise;
+        % Compute DMD eigenvalues
+        %[Phin, Lambdan, U, S, V, Atilden] = DMDext(xn,r);
+        Admdtls  = dmd_tls(xn);
+        % Separate eigenvalues into two groups
+        eval = eig(Admdtls);
+        [~,i1] = min(abs(eval-1i));
+        [~,i2] = min(abs(eval+1i));
+        EigsTLS(:,nn) = [eval(i1); eval(i2)];
+    end
+    Eigs1 = [Eigs1; EigsTLS(1,:)'];
+    Eigs2 = [Eigs2; EigsTLS(2,:)'];
+    j
+end
+% Plot density
+[N,C] = hist3([real(Eigs1),imag(Eigs1); real(Eigs2),imag(Eigs2)],[100,100]);
+[CX,CY] = meshgrid(C{1},C{2});
+figure; contourf(CX',CY',N,100,'LineStyle','none')
+xlim([0.7,1.05]); ylim([-0.15,0.15]);
 
 
