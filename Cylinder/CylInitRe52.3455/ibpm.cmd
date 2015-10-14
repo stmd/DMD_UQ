@@ -1,0 +1,1 @@
+./build/ibpm -outdir /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455 -tecplot 10000 -tecplotallgrids 0 -restart 2000 -nx 800 -ny 200 -length 16 -xoffset -1.5 -yoffset -2 -xshift 0.8 -reftime 10000 -geom Geometries/cylinder2Pa.geom -ubf 1 -Re 52.3455 -dt 0.02 -nsteps 15000 -scheme rk3 -nftle 0

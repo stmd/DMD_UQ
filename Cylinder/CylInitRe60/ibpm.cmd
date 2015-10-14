@@ -1,0 +1,1 @@
+./build/ibpm -outdir output/Cylinder/CylInitRe60 -tecplot 10000 -tecplotallgrids 1 -restart 2000 -nx 800 -ny 400 -length 16 -xoffset -1.5 -yoffset -4 -xshift 0.8 -reftime 10000 -geom Geometries/cylinder2Pa.geom -ubf 1 -Re 60 -dt 0.01 -nsteps 30000 -scheme rk3 -nftle 0
