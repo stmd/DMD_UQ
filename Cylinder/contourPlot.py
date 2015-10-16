@@ -26,6 +26,7 @@ def contourPlot(X,Y,Z):
         #'figure.markersize': 50}
     }
     pylab.rcParams.update(params)
+    figure();
     fig = plt.figure()
     ax = plt.gca()
     # Colorbar code ************
