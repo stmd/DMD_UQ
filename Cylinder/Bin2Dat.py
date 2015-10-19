@@ -49,15 +49,16 @@ def Bin2Dat(filename):
         x = np.linspace(x0,xf,nx);
         y = np.linspace(y0,yf,ny);
         Z = np.squeeze(omega[0,0:nx,0:ny]);
+        Z = np.transpose(Z);
         XX,YY = np.meshgrid(x,y);
         XX = np.transpose(XX);
         YY = np.transpose(YY);
         X = np.zeros(nx*ny); Y = np.zeros(nx*ny);
         iter = 0;
-        for i in range(0,nx):
-            for j in range(0,ny):
-                X[iter] = XX[i,j];
-                Y[iter] = YY[i,j];
+        for i in range(0,ny):
+            for j in range(0,nx):
+                X[iter] = XX[j,i];
+                Y[iter] = YY[j,i];
                 iter = iter+1;
         # Return struct containing information
         data = IBPMData();

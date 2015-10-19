@@ -25,8 +25,8 @@ def contourPlot(X,Y,Z):
         'figure.figsize':fig_size,
         #'figure.markersize': 50}
     }
-    pylab.rcParams.update(params)
-    figure();
+    pylab.rcParams.update(params);
+    plt.ion();
     fig = plt.figure()
     ax = plt.gca()
     # Colorbar code ************
@@ -37,11 +37,13 @@ def contourPlot(X,Y,Z):
     levels = range(min,max+step,step)
     CS3 = plt.contourf(ZZ, levels, cmap=cm.coolwarm)
     plt.clf()
-    plt.scatter(X,Y,c=Z,cmap=cm.coolwarm,s=5,lw=0,vmin=-5,vmax=5);
+    minC = 0.5*Z.min();
+    maxC = 0.5*Z.max();
+    plt.scatter(X,Y,c=Z,cmap=cm.coolwarm,s=5,lw=0,vmin=minC,vmax=maxC);
     ax2 = plt.gca();
     ax2.set_aspect('equal')
     cbar = plt.colorbar(CS3, ticks=[0, 100])
-    cbar.ax.set_yticklabels(['-5', '5'])
+    cbar.ax.set_yticklabels(["{0:.2f}".format(minC), "{0:.2f}".format(maxC)])
 
     ax.set_axisbelow(True)
     plt.gcf().subplots_adjust(left=0.16)
