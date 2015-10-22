@@ -13,6 +13,7 @@ from contourPlot import contourPlot
 from Bin2Dat import Bin2Dat
 from readPltData import readPltData
 from IBPMData import IBPMData
+from LegendreProjection import Legendre, LegendreProjection
 
 # **********************************************************
 # MatPlotLib formatting stuff
@@ -62,6 +63,7 @@ iter = 0;
 runs = np.size(Re);
 times = 100;
 samp = 10;
+DT = 0.02*samp;
 snapshots = runs*times;
 LoadRead = "LOAD";
 # Either read data, or load from file
@@ -124,7 +126,7 @@ for i in range(0,runs):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o");
 # DMD
 coeffDMD = np.zeros((M,snapshots/M));
-eigDMD = np.zeros((M*M),dtype=complex); 
+eigDMD = np.zeros((M*runs),dtype=complex); 
 for i in range(0,runs):
     indStart=times*i;
     indEnd=times*(i+1);
@@ -137,6 +139,15 @@ for i in range(0,runs):
     for j in range(0,M):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o",color='blue');
         plt.plot(np.linspace(1,times,times),coeffDMD[j,0:snapshots/M],marker="x",color='red');
+eigC = np.log(eigDMD)/DT;
+# PCE on DMD eigenvalue distribution
+weights = [0.1185, 0.2393, 0.2844, 0.2393, 0.1185];
+xiQ = np.zeros(np.size(Re));
+coeffREAL = np.zeros((np.size(Re),runs*M));
+for j in range(0,runs*M):
+    for i in range(0,np.size(Re)):
+        xiQ[i] = (2/(Re[np.size(Re)-1]-Re[0]))*(Re[i]-Re[0]) - 1;
+        coeffREAL[i,j] = LegendreProjection(np.real(eigC[j]),
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");
