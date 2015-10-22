@@ -3,6 +3,7 @@ import numpy as np
 import pylab
 import os.path
 import shutil
+import time
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter, ScalarFormatter, MaxNLocator
 import matplotlib.pyplot as plt
@@ -10,6 +11,7 @@ from matplotlib.pyplot import figure, axes, plot, xlabel, ylabel, title, grid, s
 # User-defined auxiliary functions/structures
 from contourPlot import contourPlot
 from Bin2Dat import Bin2Dat
+from readPltData import readPltData
 from IBPMData import IBPMData
 
 # **********************************************************
@@ -51,34 +53,49 @@ def reshapeSnapshot(Z,nx,ny):
 # Main script to handle data processing
 # **********************************************************
 
-# Set up file IO
+# Parameters for runs
 basedir = "Cylinder/";
 Re = [52.3455, 61.5383, 75, 88.4617, 97.6545];
+IC = [58000, 28000, 30000, 26000, 28000];
 Xnew = np.array;
 iter = 0;
 runs = np.size(Re);
-times = 7;
+times = 100;
+samp = 10;
 snapshots = runs*times;
-for i in range(0,runs):
-    FileNameBase = basedir + "CylInitRe" + str(Re[i]);
-    for j in range(0,times):
-        ind = 2*(j+1);
-        if j<4:
-            FileName = FileNameBase + "/ibpm" + str(0) + str(ind) + "000.bin";
-        else:
-            FileName = FileNameBase + "/ibpm" + str(ind) + "000.bin";
-        # Scan in data
-        print "PROCESSING " + FileName + "...\n"
-        data = IBPMData();
-        data = Bin2Dat(FileName);
-        # Append data as column of POD matrix
-        Xnew = np.reshape(data.Z,data.nx*data.ny,1);
-        if ((i==0) & (j==0)):
-            X = np.zeros((data.nx*data.ny,snapshots));
-            X[0:data.nx*data.ny,iter] = Xnew;
-        else:
-            X[0:data.nx*data.ny,iter] = Xnew;
-        iter = iter+1;
+LoadRead = "LOAD";
+# Either read data, or load from file
+if LoadRead == "LOAD":
+    for i in range(0,runs):
+        # Get filename
+        FileNameBase = basedir + "CylInitRe" + str(Re[i]);
+        for j in range(0,times):
+            ind = IC[i] + samp*j;
+            numDig = len(str(ind));
+            if numDig==3:
+                FileName = FileNameBase + "/ibpm" + str(0) + str(0) + str(ind) + ".plt";
+            elif numDig==4:
+                FileName = FileNameBase + "/ibpm" + str(0) + str(ind) + ".plt";
+            elif numDig==5:
+                FileName = FileNameBase + "/ibpm" + str(ind) + ".plt";
+                # Scan in data
+                print "PROCESSING file" + str(iter+1) + " " + FileName + "...\n"
+                data = IBPMData();
+                data = readPltData(FileName);
+                # Append data as column of POD matrix
+                if ((i==0) & (j==0)):
+                    X = np.zeros((data.nx*data.ny,snapshots));
+                X[0:data.nx*data.ny,iter] = data.Z;
+                iter = iter+1;
+    # Output POD data matrix to file
+    np.savetxt('PODMatrix.dat',X);
+elif LoadRead == "READ":
+    print "READING DATA MATRIX FROM FILE..."
+    X = np.loadtxt('PODMatrix.dat');
+    ind = 58000;
+    FileName = basedir + "CylInitRe" + str(Re[0]) + "/ibpm" + str(ind) + ".plt";
+    data = IBPMData();
+    data = readPltData(FileName);
 nx = data.nx; ny = data.ny;
 sizeX = np.size(X,0);
 # Extract POD modes
@@ -92,21 +109,34 @@ PHI = np.zeros((sizeX,M));
 LAM = np.zeros(M);
 for i in range(0,M):
     PHI[0:sizeX,i] = 1/np.sqrt(mu[i])*np.dot(X,v[0:snapshots,i]);
-    LAM[i] = (1/M)*mu[i];
-    #contourPlot(data.X,data.Y,reshapeSnapshot(PHI[0:sizeX,i],data.nx,data.ny));
+    LAM[i] = (1.0/M)*mu[i];
+    contourPlot(data.X,data.Y,PHI[0:sizeX,i]);
 # Project data onto POD modes
 coeff = np.zeros((M,snapshots));
 for i in range(0,snapshots):
     for j in range(0,M):
         coeff[j,i] = np.dot(np.transpose(PHI[0:sizeX,j]),X[0:sizeX,i]);
-fig = plt.figure()
-ax = plt.gca()
 for i in range(0,runs):
     indStart = times*i;
     indEnd = times*(i+1);
     plt.figure();
     for j in range(0,M):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o");
+# DMD
+coeffDMD = np.zeros((M,snapshots/M));
+eigDMD = np.zeros((M*M),dtype=complex); 
+for i in range(0,runs):
+    indStart=times*i;
+    indEnd=times*(i+1);
+    A = np.dot(coeff[0:M,indStart+1:indEnd],np.linalg.pinv(coeff[0:M,indStart:indEnd-1]));
+    coeffDMD[0:M,0] = coeff[0:M,indStart];
+    coeffDMD[0:M,1:snapshots/M] = np.dot(A,coeff[0:M,indStart:indEnd-1]);
+    muDMD,vDMD = np.linalg.eig(A);
+    eigDMD[i*M:(i+1)*M] = muDMD;
+    plt.figure();
+    for j in range(0,M):
+        plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o",color='blue');
+        plt.plot(np.linspace(1,times,times),coeffDMD[j,0:snapshots/M],marker="x",color='red');
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");

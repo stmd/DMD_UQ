@@ -10,4 +10,4 @@
 workdir=$PBS_O_WORKDIR
 cd $workdir
 
-./build/ibpm -outdir $OUTDIR -tecplot 10000 -tecplotallgrids 0 -restart 2000 -nx 800 -ny 200 -length 16 -xoffset -1.5 -yoffset -2 -xshift 0.8 -reftime 10000 -geom Geometries/cylinder2Pa.geom -ubf 1 -Re $RE -dt 0.02 -nsteps 15000 -scheme rk3 -nftle 0
+./build/ibpm -outdir $OUTDIR -tecplot 10 -tecplotallgrids 0 -restart 200 -nx 800 -ny 200 -length 16 -xoffset -1.5 -yoffset -2 -xshift 0.8 -reftime 10000 -geom Geometries/cylinder2Pa.geom -ubf 1 -Re $RE -dt 0.02 -nsteps 1000 -scheme rk3 -nftle 0 -ic $IC

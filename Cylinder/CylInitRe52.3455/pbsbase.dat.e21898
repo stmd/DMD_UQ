@@ -1,0 +1,34 @@
+Integration scheme MUST be euler for MotionControl.  Type rk3 is not supported.
+Using Cholesky solver for projection step
+Using Cholesky solver for projection step
+Using Cholesky solver for projection step
+Reading restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm28000.bin...done
+Loading Cholesky factorization from file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm_01.cholesky...done
+Loading Cholesky factorization from file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm_02.cholesky...done
+Loading Cholesky factorization from file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm_03.cholesky...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm28000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm30000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm30000.bin...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm32000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm33000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm34000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm36000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm36000.bin...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm38000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm39000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm40000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm42000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm42000.bin...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm44000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm45000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm46000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm48000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm48000.bin...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm50000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm51000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm52000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm54000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm54000.bin...done
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm56000.bin...done
+Writing Tecplot file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm57000.plt
+Writing restart file /home/adegenna/ibpmcontrol/ibpmcontrol/output/Cylinder/CylInitRe52.3455/ibpm58000.bin...done

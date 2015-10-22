@@ -21,4 +21,6 @@ class IBPMData:
         self.time = 0;
         self.X = 0;
         self.Y = 0;
+        self.U = 0;
+        self.V = 0;
         self.Z = 0;
