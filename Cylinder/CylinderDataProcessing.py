@@ -57,6 +57,7 @@ def reshapeSnapshot(Z,nx,ny):
 # Parameters for runs
 basedir = "Cylinder/";
 Re = [52.3455, 61.5383, 75, 88.4617, 97.6545];
+endPts = [50,100];
 IC = [58000, 28000, 30000, 26000, 28000];
 Xnew = np.array;
 iter = 0;
@@ -65,7 +66,7 @@ times = 100;
 samp = 10;
 DT = 0.02*samp;
 snapshots = runs*times;
-LoadRead = "LOAD";
+LoadRead = "READ";
 # Either read data, or load from file
 if LoadRead == "LOAD":
     for i in range(0,runs):
@@ -126,7 +127,7 @@ for i in range(0,runs):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o");
 # DMD
 coeffDMD = np.zeros((M,snapshots/M));
-eigDMD = np.zeros((M*runs),dtype=complex); 
+eigDMD = np.zeros((M,runs),dtype=complex); 
 for i in range(0,runs):
     indStart=times*i;
     indEnd=times*(i+1);
@@ -134,20 +135,48 @@ for i in range(0,runs):
     coeffDMD[0:M,0] = coeff[0:M,indStart];
     coeffDMD[0:M,1:snapshots/M] = np.dot(A,coeff[0:M,indStart:indEnd-1]);
     muDMD,vDMD = np.linalg.eig(A);
-    eigDMD[i*M:(i+1)*M] = muDMD;
+    eigDMD[0:M,i] = muDMD;
     plt.figure();
     for j in range(0,M):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o",color='blue');
         plt.plot(np.linspace(1,times,times),coeffDMD[j,0:snapshots/M],marker="x",color='red');
 eigC = np.log(eigDMD)/DT;
+# Separate eigenvalues into groups based on frequency
+omegaHIGH = 1.5;
+omegaLOW = 0.5;
+eigHIGH = np.zeros(M);
+eigLOW = np.zeros(M);
+iterHIGH = 0;
+iterLOW = 0;
+eigC = np.reshape(eigC,M*runs,1);
+for i in range(0,M*runs):
+    if np.imag(eigC[i]) > omegaHIGH:
+        eigHIGH[iterHIGH] = np.imag(eigC[i]);
+        iterHIGH += 1;
+    elif ((np.imag(eigC[i]) > omegaLOW) & (np.imag(eigC[i]) < omegaHIGH)):
+        eigLOW[iterLOW] = np.imag(eigC[i]);
+        iterLOW += 1;
 # PCE on DMD eigenvalue distribution
 weights = [0.1185, 0.2393, 0.2844, 0.2393, 0.1185];
-xiQ = np.zeros(np.size(Re));
-coeffREAL = np.zeros((np.size(Re),runs*M));
-for j in range(0,runs*M):
-    for i in range(0,np.size(Re)):
-        xiQ[i] = (2/(Re[np.size(Re)-1]-Re[0]))*(Re[i]-Re[0]) - 1;
-        coeffREAL[i,j] = LegendreProjection(np.real(eigC[j]),
+xiQ = np.zeros(runs);
+coeffHIGH = np.zeros(runs);
+coeffLOW = np.zeros(runs);
+for i in range(0,runs):
+    xiQ[i] = (2.0/(endPts[np.size(endPts)-1]-endPts[0]))*(Re[i]-endPts[0]) - 1;
+coeffHIGH = LegendreProjection(eigHIGH,xiQ,weights);
+coeffLOW = LegendreProjection(eigLOW,xiQ,weights);
+# Sample, plot histogram of statistics
+nsamps = 50000;
+samps = np.random.uniform(-1,1,nsamps);
+distHIGH = np.zeros(nsamps);
+distLOW = np.zeros(nsamps);
+for i in range(0,nsamps):
+    for j in range(0,runs):
+        distHIGH[i] += coeffHIGH[j]*Legendre(samps[i],j);
+        distLOW[i] += coeffLOW[j]*Legendre(samps[i],j);
+n, bins, patches = plt.hist(distHIGH, 25, normed=1, facecolor='b', alpha=0.75);
+figure();
+n2, bins2, patches2 = plt.hist(distLOW, 25, normed=1, facecolor='b', alpha=0.75);
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");

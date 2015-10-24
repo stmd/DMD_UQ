@@ -10,11 +10,12 @@ import Legendre as Legendre
 # **************************************************
 def LegendreProjection(fQ,xiQ,wQ):
     Q = np.size(wQ);
-    PROJ = 0;
+    PROJ = np.zeros(Q);
     for i in range(0,Q):
-        LEG = Legendre(xiQ,i);
-        NORM = 2/(2*i+1);
-        PROJ = PROJ + LEG*fQ*wQ[i]/NORM;
+        for j in range(0,Q):
+            LEG = Legendre(xiQ[j],i);
+            NORM = 2.0/(2*i+1);
+            PROJ[i] += LEG*fQ[j]*wQ[j]/NORM;
     return PROJ;
 
 
