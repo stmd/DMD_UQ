@@ -1,9 +1,7 @@
+from __future__ import division
 import sys
 import numpy as np
 import pylab
-from __future__ import division
-# Custom auxiliary functions
-import Legendre as Legendre
 
 # **************************************************
 # Discrete projection onto Legendre polynomials
@@ -14,7 +12,7 @@ def LegendreProjection(fQ,xiQ,wQ):
     for i in range(0,Q):
         for j in range(0,Q):
             LEG = Legendre(xiQ[j],i);
-            NORM = 2.0/(2*i+1);
+            NORM = 1.0/(2*i+1);
             PROJ[i] += LEG*fQ[j]*wQ[j]/NORM;
     return PROJ;
 

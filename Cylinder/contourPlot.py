@@ -11,22 +11,6 @@ from matplotlib.pyplot import figure, axes, plot, xlabel, ylabel, title, grid, s
 # **********************************************************
 
 def contourPlot(X,Y,Z):
-    # Set figure parameters
-    inches_per_pt = 1.0/72.27
-    width = 1150
-    height = 400
-    fig_size = [width*inches_per_pt,height*inches_per_pt]
-
-    params = {   #'axes.labelsize': 30,
-        #'text.fontsize': 40,
-        #'legend.fontsize': 20,
-        'xtick.labelsize': 40,
-        'ytick.labelsize': 40,             
-        'figure.figsize':fig_size,
-        #'figure.markersize': 50}
-    }
-    pylab.rcParams.update(params);
-    plt.ion();
     fig = plt.figure()
     ax = plt.gca()
     # Colorbar code ************
@@ -40,6 +24,8 @@ def contourPlot(X,Y,Z):
     minC = 0.5*Z.min();
     maxC = 0.5*Z.max();
     plt.scatter(X,Y,c=Z,cmap=cm.coolwarm,s=5,lw=0,vmin=minC,vmax=maxC);
+    axes().set_xlim([-1.5,14.5]);
+    axes().set_ylim([-2.0,2.0]);
     ax2 = plt.gca();
     ax2.set_aspect('equal')
     cbar = plt.colorbar(CS3, ticks=[0, 100])

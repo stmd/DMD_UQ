@@ -1,3 +1,4 @@
+from __future__ import division
 import sys
 import numpy as np
 import pylab
@@ -20,8 +21,8 @@ from LegendreProjection import Legendre, LegendreProjection
 # **********************************************************
 
 inches_per_pt = 1.0/72.27
-width = 1150
-height = 400
+width = 600
+height = 200
 fig_size = [width*inches_per_pt,height*inches_per_pt]
 
 params = {   
@@ -127,7 +128,8 @@ for i in range(0,runs):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o");
 # DMD
 coeffDMD = np.zeros((M,snapshots/M));
-eigDMD = np.zeros((M,runs),dtype=complex); 
+eigDMD = np.zeros((M,runs),dtype=complex);
+vecDMD = np.zeros((M
 for i in range(0,runs):
     indStart=times*i;
     indEnd=times*(i+1);
@@ -177,6 +179,24 @@ for i in range(0,nsamps):
 n, bins, patches = plt.hist(distHIGH, 25, normed=1, facecolor='b', alpha=0.75);
 figure();
 n2, bins2, patches2 = plt.hist(distLOW, 25, normed=1, facecolor='b', alpha=0.75);
+
+# POD separately for each simulation; do UQ on POD modes
+# Extract POD modes
+print "COMPUTING POD...\n";
+M = 5;
+MEANS = np.zeros((sizeX,runs));
+POD = np.zeros((sizeX,M,runs));
+for i in range(0,runs):
+    ind1 = times*i;
+    ind2 = times*(i+1);
+    Xtmp = X[:,ind1:ind2];
+    Xmean = np.sum(Xtmp,axis=1)/times;
+    Xtmp = Xtmp - np.transpose(np.tile(Xmean,[times,1]));
+    XTX = np.dot(np.transpose(Xtmp),Xtmp);
+    mu,v = np.linalg.eig(XTX);
+    MEANS[:,i] = Xmean;
+    for j in range(0,M):
+        POD[:,j,i] = 1/np.sqrt(mu[j])*np.dot(Xtmp,v[:,j]);
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");
