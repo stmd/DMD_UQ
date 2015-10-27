@@ -52,7 +52,7 @@ def reshapeSnapshot(Z,nx,ny):
     return Znew;
 
 # **********************************************************
-# Main script to handle data processing
+# Read/load data
 # **********************************************************
 
 # Parameters for runs
@@ -102,6 +102,11 @@ elif LoadRead == "READ":
     data = readPltData(FileName);
 nx = data.nx; ny = data.ny;
 sizeX = np.size(X,0);
+
+# **********************************************************
+# Global POD, UQ on DMD eigenvalues/vectors
+# **********************************************************
+
 # Extract POD modes
 print "COMPUTING POD...\n";
 Xmean = np.sum(X,axis=1)/snapshots;
@@ -180,8 +185,11 @@ n, bins, patches = plt.hist(distHIGH, 25, normed=1, facecolor='b', alpha=0.75);
 figure();
 n2, bins2, patches2 = plt.hist(distLOW, 25, normed=1, facecolor='b', alpha=0.75);
 
+# **********************************************************
 # POD separately for each simulation; do UQ on POD modes
-# Extract POD modes
+# **********************************************************
+
+# Extract POD modes for each Re number
 print "COMPUTING POD...\n";
 M = 5;
 MEANS = np.zeros((sizeX,runs));
@@ -197,6 +205,27 @@ for i in range(0,runs):
     MEANS[:,i] = Xmean;
     for j in range(0,M):
         POD[:,j,i] = 1/np.sqrt(mu[j])*np.dot(Xtmp,v[:,j]);
+# Do PCE on the actual POD modes
+weights = [0.1185, 0.2393, 0.2844, 0.2393, 0.1185];
+xiQ = np.zeros(runs);
+for i in range(0,runs):
+    xiQ[i] = (2.0/(endPts[np.size(endPts)-1]-endPts[0]))*(Re[i]-endPts[0]) - 1;
+Q = runs;
+LEGcoeffMEAN = np.zeros((sizeX,Q));
+LEGcoeffPOD = np.zeros((sizeX,Q,M));
+for j in range(0,sizeX):
+    LEGcoeffMEAN[j,:] = LegendreProjection(MEANS[j,:],xiQ,weights);
+for j in range(0,Q):
+    for k in range(0,sizeX):
+        LEGcoeffPOD[k,j,:] = LegendreProjection(POD[k,j,:],xiQ,weights);
+# Compute variance
+VarianceMEAN = np.zeros((sizeX));
+VariancePOD = np.zeros((sizeX,M));
+for i in range(0,sizeX):
+    VarianceMEAN[i] += np.sum(np.power(LEGcoeffMEAN[i,1:Q],2));
+for i in range(0,sizeX):
+    for j in range(0,M):
+        VariancePOD[i,j] += np.sum(np.power(LEGcoeffPOD[i,j,1:Q],2));
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");
