@@ -134,7 +134,7 @@ for i in range(0,runs):
 # DMD
 coeffDMD = np.zeros((M,snapshots/M));
 eigDMD = np.zeros((M,runs),dtype=complex);
-vecDMD = np.zeros((M
+vecDMD = np.zeros((M,M,runs),dtype=complex);
 for i in range(0,runs):
     indStart=times*i;
     indEnd=times*(i+1);
@@ -142,7 +142,8 @@ for i in range(0,runs):
     coeffDMD[0:M,0] = coeff[0:M,indStart];
     coeffDMD[0:M,1:snapshots/M] = np.dot(A,coeff[0:M,indStart:indEnd-1]);
     muDMD,vDMD = np.linalg.eig(A);
-    eigDMD[0:M,i] = muDMD;
+    eigDMD[:,i] = muDMD;
+    vecDMD[:,:,i] = vDMD;
     plt.figure();
     for j in range(0,M):
         plt.plot(np.linspace(1,times,times),coeff[j,indStart:indEnd],marker="o",color='blue');
@@ -172,6 +173,9 @@ for i in range(0,runs):
     xiQ[i] = (2.0/(endPts[np.size(endPts)-1]-endPts[0]))*(Re[i]-endPts[0]) - 1;
 coeffHIGH = LegendreProjection(eigHIGH,xiQ,weights);
 coeffLOW = LegendreProjection(eigLOW,xiQ,weights);
+# PCE on DMD eigenvector distribution
+
+
 # Sample, plot histogram of statistics
 nsamps = 50000;
 samps = np.random.uniform(-1,1,nsamps);
@@ -226,6 +230,13 @@ for i in range(0,sizeX):
 for i in range(0,sizeX):
     for j in range(0,M):
         VariancePOD[i,j] += np.sum(np.power(LEGcoeffPOD[i,j,1:Q],2));
+# Compute reconstructions
+REC = np.zeros((sizeX));
+mode = 0;
+xi = xiQ[4];
+for i in range(0,sizeX):
+    for j in range(0,Q):
+        REC[i] += LEGcoeffPOD[i,mode,j]*Legendre(xi,j);
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");
