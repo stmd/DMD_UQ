@@ -79,34 +79,35 @@ def generatePerturbedCylinder(R,numPts,theta):
 # Generate several perturbed cylinder geometries for IBPM
 # **********************************************************
 
-xi = [82.1110, 90.3844, 102.5000, 114.6156, 122.8890];
+#xi = [82.1110, 90.3844, 102.5000, 114.6156, 122.8890];
+xi = [84.2219, 100.7689, 125.0000, 149.2311, 165.7781];
 Q = np.size(xi);
 R = 0.5;
 numPts = 160;
 basedir = "/home/adegenna/ibpmcontrol/ibpmcontrol/output/PerturbedCylinder/"
 for i in range(0,Q):
     # Generate cylinders
-    # xy = generatePerturbedCylinder(R,numPts,xi[i]);
-    # outFile = basedir + "grid" + str(xi[i]) + ".dat";
-    # fp = open(outFile,"w");
-    # fp.write("%d\n" %(numPts));
-    # for j in range(0,numPts):
-    #     fp.write("%f %f\n" %(xy[j,0],xy[j,1]));
-    # fp.close();
-    # Qsub the jobs
-    # header1 = "body PerturbedCylinder" + str(xi[i]);
-    # header2 = "raw " + outFile;
-    # header3 = "motion Stationary 0 0 0 0";
-    # header4 = "end"
+    xy = generatePerturbedCylinder(R,numPts,xi[i]);
+    outFile = basedir + "grid" + str(xi[i]) + ".dat";
+    fp = open(outFile,"w");
+    fp.write("%d\n" %(numPts));
+    for j in range(0,numPts):
+        fp.write("%f %f\n" %(xy[j,0],xy[j,1]));
+    fp.close();
+    #Qsub the jobs
+    header1 = "body PerturbedCylinder" + str(xi[i]);
+    header2 = "raw " + outFile;
+    header3 = "motion Stationary 0 0 0 0";
+    header4 = "end"
     fileGeom = "PerturbedCylinder" + str(xi[i]) + ".dat";
-    # fGeom = open(fileGeom,"w");
-    # fGeom.write(header1+"\n");
-    # fGeom.write(header2+"\n");
-    # fGeom.write(header3+"\n");
-    # fGeom.write(header4+"\n");
-    # fGeom.close();
+    fGeom = open(fileGeom,"w");
+    fGeom.write(header1+"\n");
+    fGeom.write(header2+"\n");
+    fGeom.write(header3+"\n");
+    fGeom.write(header4+"\n");
+    fGeom.close();
     outDir = basedir + "Grid" + str(xi[i]);
     geomFile = basedir + fileGeom;
     ic = outDir + "/ibpm08000.bin"
-    os.system("qsub -v OUTDIR=" + outDir + ",GEOM=" + geomFile + ",IC=" + ic + " " + basedir + "pbsbase.dat");
+    os.system("qsub -v OUTDIR=" + outDir + ",GEOM=" + geomFile + " " + basedir + "pbsbase.dat");
     
