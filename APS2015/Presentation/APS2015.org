@@ -1,0 +1,251 @@
+#+STARTUP: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [9pt]
+
+#+latex_header: \mode<beamer>{\usetheme{Warsaw}}
+#+latex_header: \mode<beamer>{\setbeamertemplate{blocks}[rounded][shadow=false]}
+#+latex_header: \mode<beamer>{\addtobeamertemplate{block begin}{\pgfsetfillopacity{0.8}}{\pgfsetfillopacity{1}}}
+#+latex_header: \mode<beamer>{\setbeamercolor{structure}{fg=orange}}
+#+latex_header: \mode<beamer>{\setbeamercovered{transparent}}
+#+latex_header: \AtBeginSection[]{\begin{frame}<beamer>\frametitle{Topic}\tableofcontents[currentsection]\end{frame}}
+
+#+latex_header: \usepackage{subcaption}
+#+latex_header: \usepackage{multimedia}
+#+latex_header: \usepackage{tikz}
+#+latex_header: \usepackage{subfigure,subfigmat}
+#+latex_header: \usepackage{threeparttable}
+#+latex_header: \usetikzlibrary{shapes,arrows,shadows}
+#+latex_header: \usepackage{bm, amssymb, amsmath, array, pdfpages,graphicx}
+
+#+begin_latex
+% Define my settings
+
+\graphicspath{{../Figures/}}
+% Add Princeton shield logo
+\addtobeamertemplate{frametitle}{}{%
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north east,yshift=2pt] at (current page.north east) {\includegraphics[height=0.7cm]{Shield}};
+\end{tikzpicture}}
+%
+#+end_latex
+
+#+latex_header: \newcommand{\bv}[1]{\mathbf{#1}}
+#+latex_header: \newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+#+latex_header: \newcommand{\beq}[0]{\begin{equation}}
+#+latex_header: \newcommand{\eeq}[0]{\end{equation}}
+#+latex_header: \newcommand{\beqa}[0]{\begin{eqnarray}}
+#+latex_header: \newcommand{\eeqa}[0]{\end{eqnarray}}
+#+latex_header: \newcommand{\beqq}[0]{\begin{equation*}}
+#+latex_header: \newcommand{\eeqq}[0]{\end{equation*}}
+#+latex_header: \newcommand{\bs}[1]{\boldsymbol{#1}}
+#+latex_header: \newcommand{\ip}[2]{\langle #1, #2\rangle}
+#+BEAMER_FRAME_LEVEL: 2
+
+#+DATE: APS 68$^{th}$ Annual DFD Meeting \\ Boston, MA \\ November 2015
+#+TITLE: Uncertainty Quantification of Low-Dimensional Models
+#+AUTHOR: Anthony DeGennaro \newline Scott Dawson \newline Clarence W. Rowley III \newline Princeton University
+\institute{Princeton University}
+
+
+* Introduction
+** Motivation
+- Low-dimensional modeling is a useful method for examining high-dimensional data
+  - Proper Orthogonal Decomposition (POD)
+    - Data compression
+    - Dominant spatial features
+    - Inexpensive models
+  - Dynamic Mode Decomposition (DMD)
+    - Linear description of dynamical system
+    - Spatial modes + frequencies
+- Uncertainty quantification is a useful method for investigating statistical variations
+  - Polynomial Chaos Expansions (PCE)
+    - Assumes /a-priori/ probabilistic knowledge of uncertainty
+    - Efficient sampling algorithm
+    - Accurate surrogate model
+- *Can we investigate statistical variations in low-dimensional models efficiently/accurately?*
+
+** Applications
+- POD Galerkin Models of Fluid Flows
+  - Computationally-inexpensive model 
+    - Collect data from simulations/experiments
+    - Calculate POD of output data
+    - Project governing flow equations onto POD modes
+- DMD Analysis of Fluid Flows
+  - Determine linear modes/frequencies describing flow behavior
+- Sensitive to parametric variations/uncertainties
+  - Physical parameters (eg. Reynolds number)
+  - Boundary conditions
+  - Sensor noise
+
+
+* Methodology
+** Methodology
+- Identify source of uncertainty
+  - Physical parameters (eg. Reynolds number)
+  - Boundary conditions
+  - Sensor noise
+- Write a probabilistic description of uncertainty (ie. PDF)
+- Utilize efficient sampling of probability space
+  - Quadrature nodes corresponding to a spectral basis
+- Collect simulation data using discrete points in probability space
+  - Immersed boundary projection method (IBPM) code
+- Quantify uncertainty in outputs
+  - POD modes
+  - DMD modes
+  - DMD eigenvalues
+** Polynomial Chaos Expansions (PCE)
+- *Polynomial Chaos Framework* [fn:XiuBook]
+  - Let $\bv{Z} = (Z_1 \ldots Z_d)$ be $d$ random variables with PDF
+    $\rho(\bv{Z})$ that parameterize ice
+  - Let $\lbrace \Phi_k \rbrace$ denote the set of polynomials
+    which are orthogonal w.r.t. $\rho(\bv{Z})$
+  - Let $y(\bv{Z})$ denote the mapping from $\bv{Z}$ to an aerodynamic
+    performance metric
+- *Probabilistic Collocation Method:*
+  - /Representation/ 
+    \begin{equation*}
+      y(\bv{Z}) \approx \sum_{|i|=0}^N y_i \Phi_i(\bv{Z})
+    \end{equation*}
+  - /Orthonormality/ 
+    \begin{equation*}
+    \begin{aligned}
+      \ip{f}{g} &= \int_{\Gamma} f(\bv{z})g(\bv{z}) \rho(\bv{z}) d\bv{z} \\
+      \ip{\Phi_i}{\Phi_j} &= \delta_{ij}
+    \end{aligned}
+    \end{equation*}
+  - /Quadrature/ 
+    \begin{equation*}
+      y_k = \ip{y}{\Phi_k} \approx \sum_{i=0}^{Q}
+    y(\bv{Z}^{(k)}) \Phi_k(\bv{Z}^{(k)}) w_k
+    \end{equation*}
+[fn:XiuBook] Xiu D. /Numerical Methods for Stochastic Computations: A
+Spectral Method Approach/. Princeton University Press, 2010.
+
+** Polynomial Chaos Expansions (PCE)
+#+begin_latex
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=0.9\textwidth]{MCSampling} \\
+\centering
+\textbf{Monte Carlo} \\
+\begin{equation*}
+  y \approx \delta(\xi - \xi_k)
+\end{equation}
+\end{minipage}
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=0.9\textwidth]{PCESampling} \\
+\centering
+\textbf{Polynomial Chaos}
+\begin{equation*}
+  y \approx \sum_{i}^{Q} c_i \psi_i(\xi)
+\end{equation}
+\end{minipage}
+\end{figure}
+\begin{columns}[c]
+  \column{0.5\textwidth}
+      \begin{itemize}
+      \item Draw random samples from distribution
+      \item Function exists at discrete points
+    \end{itemize}
+  \column{0.5\textwidth}
+    \begin{itemize}
+      \item Use $Q$ quadrature points
+      \item Construct $(Q-1)$ order polynomial fit
+    \end{itemize}
+\end{columns}
+#+end_latex
+
+** Polynomial Chaos Expansions (PCE)
+#+begin_latex
+\begin{columns}[c]
+  \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{MonteCarlo} \\
+    \bf{Quadrature Sampling Grid}
+  \column{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{QuadraturePoints} \\
+    {\bf Monte Carlo Sampling}
+\end{columns}
+#+end_latex
+
+* Example: Cylinder Flow POD Modes
+** Setup
+#+begin_latex
+\begin{columns}[c]
+\column{0.3\textwidth}
+   \centering
+    \textbf{Small Spike} \\
+    \includegraphics[width=1\textwidth]{PerturbSmallHorn}
+\column{0.3\textwidth}
+   \centering
+    \textbf{Medium Spike} \\
+    \includegraphics[width=1\textwidth]{PerturbMediumHorn}
+\column{0.3\textwidth}
+   \centering
+    \textbf{Large Spike} \\
+    \includegraphics[width=1\textwidth]{PerturbBigHorn}
+\end{columns}
+
+\begin{columns}[c]
+\column{0.3\textwidth}
+   \centering
+\column{0.3\textwidth}
+   \centering
+    \includegraphics[width=1\textwidth]{CylinderPerturbations}
+\column{0.3\textwidth}
+   \centering
+\end{columns}
+#+end_latex
+
+** Range of Flow Behavior
+#+begin_latex
+\begin{columns}[c]
+\column{0.5\textwidth}
+   \centering
+    \textbf{Cylinder, Re = 100}
+    \movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{CylinderRe100.mp4} \\
+    \textbf{POD Modes} \\
+    \includegraphics[width=0.9\textwidth]{CylinderRe100POD1} \\
+    \includegraphics[width=0.9\textwidth]{CylinderRe100POD2} \\
+    \includegraphics[width=0.9\textwidth]{CylinderRe100POD3}
+\column{0.5\textwidth}
+   \centering
+    \textbf{Perturbed Cylinder, Re = 100}
+    \movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{PerturbCylinderRe100R1.mp4} \\
+    \textbf{POD Modes} \\
+    \includegraphics[width=0.9\textwidth]{PerturbRp95Re100POD1} \\
+    \includegraphics[width=0.9\textwidth]{PerturbRp95Re100POD2} \\
+    \includegraphics[width=0.9\textwidth]{PerturbRp95Re100POD3}
+\end{columns}
+#+end_latex
+** Statistical Variance in Modes
+\centering
+\includegraphics[width=0.5\textwidth]{VariancePOD1} \\
+\includegraphics[width=0.5\textwidth]{VariancePOD2} \\
+\includegraphics[width=0.5\textwidth]{VariancePOD3} \\
+\includegraphics[width=0.5\textwidth]{VariancePOD4} \\
+** Projection Error
+- Choose the $Q-1$ points halfway between $Q$ quadrature nodes
+- Calculate true modes and interpolated modes at $Q-1$ points
+- Compare error between true modes and interpolated modes vs. true modes and mean modes
+
+#+begin_latex
+\begin{equation*}
+N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
+\end{equation}
+#+end_latex
+
+|   | MODE | N(y_P) | N(\overline{y}) | N(\overline{y})/N(y_P) |
+|---+------+--------+-----------------+------------------------|
+| / |   <> |     <> |              <> |                        |
+| # |    1 |   4e-3 |            3e-1 |                     75 |
+| # |    2 |   3e-2 |            9e-1 |                     30 |
+| # |    3 |   2e-1 |             1.2 |                      6 |
+| # |    4 |   7e-1 |             1.5 |                      2 |
+| # |    5 |   2e-1 |             1.8 |                      9 |
+|---+------+--------+-----------------+------------------------|
+
+- PCE model captures range of symmetrical to asymmetrical modes
+* Example: Cylinder Flow DMD Eigenvalues

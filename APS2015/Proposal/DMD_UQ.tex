@@ -1,0 +1,101 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amscd,amssymb,graphicx,latexsym,epstopdf,overpic,multicol,natbib,rotating,setspace}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\newcommand{\td}[1]{\tilde{#1}}
+\newcommand{\pd}{\partial}
+\newcommand{\bpv}[2]{\begin{pmatrix}#1\\ #2\end{pmatrix}}
+\newcommand{\pdfrac}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdfractwo}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\Htwo}{\mathcal{H}_2}
+\newcommand{\Hinf}{\mathcal{H}_\infty}
+\newcommand\Real{\mbox{Re}} % cf plain TeX's \Re and Reynolds number
+\newcommand\Imag{\mbox{Im}} % cf plain TeX's \Im
+\newcommand\Rey{\mbox{\textit{Re}}}  % Reynolds number
+\newcommand\Ma{\mbox{\textit{Ma}}}  % Reynolds number
+\newcommand\Str{\mbox{\textit{St}}}
+\newcommand\Pran{\mbox{\textit{Pr}}} % Prandtl number, cf TeX's \Pr product
+\newcommand\Pen{\mbox{\textit{Pe}}}  % Peclet number
+\newcommand\Ai{\mbox{Ai}}            % Airy function
+\newcommand\Bi{\mbox{Bi}}            % Airy function
+\newcommand\ssC{\mathsf{C}}    % for sans serif C
+\newcommand\sfsP{\mathsfi{P}}  % for sans serif sloping P
+\newcommand\slsQ{\mathsfbi{Q}} % for sans serif bold-sloping Q
+\newcommand\hatp{\skew3\hat{p}}      % p with hat
+\newcommand\hatR{\skew3\hat{R}}      % R with hat
+\newcommand\hatRR{\skew3\hat{\hatR}} % R with 2 hats
+\newcommand\doubletildesigma{\skew2\tilde{\skew2\tilde{\Sigma}}}
+\newsavebox{\astrutbox}
+\sbox{\astrutbox}{\rule[-5pt]{0pt}{20pt}}
+\newcommand{\astrut}{\usebox{\astrutbox}}
+
+\newcommand\GaPQ{\ensuremath{G_a(P,Q)}}
+\newcommand\GsPQ{\ensuremath{G_s(P,Q)}}
+\newcommand\p{\ensuremath{\partial}}
+\newcommand\tti{\ensuremath{\rightarrow\infty}}
+\newcommand\kgd{\ensuremath{k\gamma d}}
+\newcommand\shalf{\ensuremath{{\scriptstyle\frac{1}{2}}}}
+\newcommand\sh{\ensuremath{^{\shalf}}}
+\newcommand\smh{\ensuremath{^{-\shalf}}}
+\newcommand\squart{\ensuremath{{\textstyle\frac{1}{4}}}}
+\newcommand\thalf{\ensuremath{{\textstyle\frac{1}{2}}}}
+\newcommand\Gat{\ensuremath{\widetilde{G_a}}}
+\newcommand\ttz{\ensuremath{\rightarrow 0}}
+\newcommand\ndq{\ensuremath{\frac{\mbox{$\partial$}}{\mbox{$\partial$} n_q}}}
+\newcommand\sumjm{\ensuremath{\sum_{j=1}^{M}}}
+\newcommand\pvi{\ensuremath{\int_0^{\infty}%
+  \mskip \ifCUPmtlplainloaded -30mu\else -33mu\fi -\quad}}
+
+\newcommand\etal{\mbox{\textit{et al.}}}
+\newcommand\etc{etc.\ }
+\newcommand\eg{e.g.\ }
+\title{Uncertainty quantification of the dynamic mode decomposition}
+
+\author{%
+  Anthony M. DeGennaro, 
+  Scott T. M. Dawson, \\ and
+  Clarence W. Rowley\\
+  \itshape
+   Princeton University\\
+ }
+
+ % define some commands to maintain consistency
+ \newcommand{\pkg}[1]{\texttt{#1}}
+ \newcommand{\cls}[1]{\textsf{#1}}
+ \newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\cwrremark}[1]{\textcolor{blue}{[CWR: #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\CLmax}{{C_L}_\text{max}}
+\newcommand{\LDmax}{L/D_\text{max}}
+\newcommand{\alphamax}{\alpha_\text{max}}
+\newcommand*{\mat}[1]{{\bf{#1}}}
+\def\ip<#1,#2>{\left\langle #1,#2\right\rangle}
+
+\begin{document}
+
+\maketitle
+
+%\begin{abstract}
+ This work explores and quantifies the statistical effect that
+ parameterized uncertainty has on the dynamic mode decomposition
+ (DMD).  For the data under consideration, such uncertain parameters
+ could include Reynolds number, geometry, or random {\color{green}
+   sensor/signal} noise in the system.  The aims of this study are
+ twofold: firstly, to quantify the robustness of the algorithm in
+ terms of pertinent identified quantities (such as DMD modes and
+ eigenvalues), thus expanding upon recent work in this area, and 
+ secondly, to present a method for analyzing the
+ underlying dynamic systems from data in an efficient
+ manner. {\color{green} We use polynomial chaos expansions to
+   represent the relevant DMD quantities of interest. This approach}
+ can be computationally more efficient than sample-based methods
+ (e.g., Monte Carlo) when the dimensionality of the parameter space is
+ moderate.  We demonstrate our methodology on a number
+ of well-studied example systems, including numerical simulations of
+ flow past a circular cylinder. {\color{green} The main contribution
+   of this work is to demonstrate a method for quantifying uncertainty
+   in DMD, thus building upon previous work in the area for the case of noisy data.}
+%\end{abstract}
+
+\end{document}
