@@ -77,7 +77,6 @@
   - Boundary conditions
   - Sensor noise
 
-
 * Methodology
 ** Methodology
 - Identify source of uncertainty
@@ -162,15 +161,15 @@ Spectral Method Approach/. Princeton University Press, 2010.
   \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.9\textwidth]{MonteCarlo} \\
-    \bf{Quadrature Sampling Grid}
+    \bf{Monte Carlo Sampling}
   \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.9\textwidth]{QuadraturePoints} \\
-    {\bf Monte Carlo Sampling}
+    {\bf Quadrature Sampling Grid}
 \end{columns}
 #+end_latex
 
-* Example: Cylinder Flow POD Modes
+* Example: Cylinder Flow
 ** Setup
 #+begin_latex
 \begin{columns}[c]
@@ -248,4 +247,23 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
 |---+------+--------+-----------------+------------------------|
 
 - PCE model captures range of symmetrical to asymmetrical modes
-* Example: Cylinder Flow DMD Eigenvalues
+** DMD Eigenvalues
+#+begin_latex
+\begin{columns}[c]
+\column{0.3\textwidth}
+   \centering
+    \textbf{Low Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode1} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigSlowPDF}
+\column{0.3\textwidth}
+   \centering
+    \textbf{Medium Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode2} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigMediumPDF}
+\column{0.3\textwidth}
+   \centering
+    \textbf{High Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode3} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
+\end{columns}
+#+end_latex

@@ -1,4 +1,4 @@
-% Created 2015-11-15 Sun 18:26
+% Created 2015-11-15 Sun 22:39
 \documentclass[9pt]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -243,14 +243,14 @@
   \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.9\textwidth]{MonteCarlo} \\
-    \bf{Quadrature Sampling Grid}
+    \bf{Monte Carlo Sampling}
   \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.9\textwidth]{QuadraturePoints} \\
-    {\bf Monte Carlo Sampling}
+    {\bf Quadrature Sampling Grid}
 \end{columns}
 \end{frame}
-\section{Example: Cylinder Flow POD Modes}
+\section{Example: Cylinder Flow}
 \label{sec-3}
 \begin{frame}
 \frametitle{Setup}
@@ -348,7 +348,27 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
 \item PCE model captures range of symmetrical to asymmetrical modes
 \end{itemize}
 \end{frame}
-\section{Example: Cylinder Flow DMD Eigenvalues}
-\label{sec-4}
+\begin{frame}
+\frametitle{DMD Eigenvalues}
+\label{sec-3-5}
+
+\begin{columns}[c]
+\column{0.3\textwidth}
+   \centering
+    \textbf{Low Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode1} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigSlowPDF}
+\column{0.3\textwidth}
+   \centering
+    \textbf{Medium Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode2} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigMediumPDF}
+\column{0.3\textwidth}
+   \centering
+    \textbf{High Frequency} \\
+    \includegraphics[width=0.9\textwidth]{DMDMode3} \\
+    \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
+\end{columns}
+\end{frame}
 
 \end{document}
