@@ -1,4 +1,4 @@
-% Created 2015-11-15 Sun 22:39
+% Created 2015-11-16 Mon 11:57
 \documentclass[9pt]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -84,27 +84,17 @@
 \item Low-dimensional modeling is a useful method for examining high-dimensional data
 \begin{itemize}
 \item Proper Orthogonal Decomposition (POD)
-\begin{itemize}
-\item Data compression
-\item Dominant spatial features
-\item Inexpensive models
-\end{itemize}
 \item Dynamic Mode Decomposition (DMD)
-\begin{itemize}
-\item Linear description of dynamical system
-\item Spatial modes + frequencies
-\end{itemize}
+\item Identify inexpensive models
+\item Identify dominant system dynamics
 \end{itemize}
 \item Uncertainty quantification is a useful method for investigating statistical variations
 \begin{itemize}
 \item Polynomial Chaos Expansions (PCE)
-\begin{itemize}
-\item Assumes \emph{a-priori} probabilistic knowledge of uncertainty
-\item Efficient sampling algorithm
+\item Efficient algorithms for exploring uncertain parameter space
 \item Accurate surrogate model
 \end{itemize}
-\end{itemize}
-\item \textbf{Can we investigate statistical variations in low-dimensional models efficiently/accurately?}
+\item \textbf{Can we investigate statistical variations in low-dimensional models   efficiently/accurately using uncertainty quantification tools?}
 \end{itemize}
 \end{frame}
 \begin{frame}
@@ -120,33 +110,61 @@
 \item Calculate POD of output data
 \item Project governing flow equations onto POD modes
 \end{itemize}
+\item Performance of models is sensitive to parametric uncertainty/variations
 \end{itemize}
 \item DMD Analysis of Fluid Flows
 \begin{itemize}
 \item Determine linear modes/frequencies describing flow behavior
+\item Spatial modes and frequencies can change with parametric uncertainty
 \end{itemize}
-\item Sensitive to parametric variations/uncertainties
+\item Examples of parametric variations/uncertainties
 \begin{itemize}
 \item Physical parameters (eg. Reynolds number)
 \item Boundary conditions
-\item Sensor noise
 \end{itemize}
 \end{itemize}
 \end{frame}
 \section{Methodology}
 \label{sec-2}
 \begin{frame}
-\frametitle{Methodology}
+\frametitle{Background}
 \label{sec-2-1}
 
+\begin{itemize}
+\item Proper Orthogonal Decomposition (POD)
+\begin{itemize}
+\item Data compression, dominant spatial features
+\item Modes are eigenvectors of the dataset covariance matrix
+\item Modes describe dataset better than any other linear basis
+\end{itemize}
+\item Dynamic Mode Decomposition (DMD)
+\begin{itemize}
+\item Describe dataset as linear dynamical system
+\item Spatial modes + (frequencies, growth/decay rates)
+\end{itemize}
+\item Polynomial Chaos Expansions (PCE)
+\begin{itemize}
+\item Method for quantifying parametric uncertainty efficiently
+\item Spectral method in probability space
+\item Expand output in terms of basis polynomial functions of random variables
+\end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Methodology}
+\label{sec-2-2}
+
+\textbf{Quantify Uncertain Input}
 \begin{itemize}
 \item Identify source of uncertainty
 \begin{itemize}
 \item Physical parameters (eg. Reynolds number)
 \item Boundary conditions
-\item Sensor noise
 \end{itemize}
 \item Write a probabilistic description of uncertainty (ie. PDF)
+\end{itemize}
+\textbf{Explore Uncertain Parameter Space}
+\begin{itemize}
 \item Utilize efficient sampling of probability space
 \begin{itemize}
 \item Quadrature nodes corresponding to a spectral basis
@@ -155,6 +173,9 @@
 \begin{itemize}
 \item Immersed boundary projection method (IBPM) code
 \end{itemize}
+\end{itemize}
+\textbf{Quantify Uncertain Output}
+\begin{itemize}
 \item Quantify uncertainty in outputs
 \begin{itemize}
 \item POD modes
@@ -165,48 +186,20 @@
 \end{frame}
 \begin{frame}
 \frametitle{Polynomial Chaos Expansions (PCE)}
-\label{sec-2-2}
-
-\begin{itemize}
-\item \textbf{Polynomial Chaos Framework} \footnote{Xiu D. \emph{Numerical Methods for Stochastic Computations: A Spectral Method Approach}. Princeton University Press, 2010.
- }
-\begin{itemize}
-\item Let $\bv{Z} = (Z_1 \ldots Z_d)$ be $d$ random variables with PDF
-    $\rho(\bv{Z})$ that parameterize ice
-\item Let $\lbrace \Phi_k \rbrace$ denote the set of polynomials
-    which are orthogonal w.r.t. $\rho(\bv{Z})$
-\item Let $y(\bv{Z})$ denote the mapping from $\bv{Z}$ to an aerodynamic
-    performance metric
-\end{itemize}
-\item \textbf{Probabilistic Collocation Method:}
-\begin{itemize}
-\item \emph{Representation} 
-    \begin{equation*}
-      y(\bv{Z}) \approx \sum_{|i|=0}^N y_i \Phi_i(\bv{Z})
-    \end{equation*}
-\item \emph{Orthonormality} 
-    \begin{equation*}
-    \begin{aligned}
-      \ip{f}{g} &= \int_{\Gamma} f(\bv{z})g(\bv{z}) \rho(\bv{z}) d\bv{z} \\
-      \ip{\Phi_i}{\Phi_j} &= \delta_{ij}
-    \end{aligned}
-    \end{equation*}
-\item \emph{Quadrature} 
-    \begin{equation*}
-      y_k = \ip{y}{\Phi_k} \approx \sum_{i=0}^{Q}
-    y(\bv{Z}^{(k)}) \Phi_k(\bv{Z}^{(k)}) w_k
-    \end{equation*}
-\end{itemize}
-\end{itemize}
-\end{frame}
-\begin{frame}
-\frametitle{Polynomial Chaos Expansions (PCE)}
 \label{sec-2-3}
 
+\begin{itemize}
+\item We have an uncertain parameter $\xi = \mathcal{U}[-1,1]$ which maps to output $y(\xi)$
+\item What is the distribution of $y(\xi)$?
+\end{itemize}
+\centering
+\begin{equation*}
+y(\xi) = a\xi^3 + b\xi^2 + c\xi + d
+\end{equation}
 \begin{figure}[ht]
 \centering
 \begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.9\textwidth]{MCSampling} \\
+\includegraphics[width=0.7\textwidth]{MCSampling} \\
 \centering
 \textbf{Monte Carlo} \\
 \begin{equation*}
@@ -214,7 +207,7 @@
 \end{equation}
 \end{minipage}
 \begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.9\textwidth]{PCESampling} \\
+\includegraphics[width=0.7\textwidth]{PCESampling} \\
 \centering
 \textbf{Polynomial Chaos}
 \begin{equation*}
@@ -225,13 +218,13 @@
 \begin{columns}[c]
   \column{0.5\textwidth}
       \begin{itemize}
-      \item Draw random samples from distribution
+      \item Draw random samples
       \item Function exists at discrete points
     \end{itemize}
   \column{0.5\textwidth}
     \begin{itemize}
       \item Use $Q$ quadrature points
-      \item Construct $(Q-1)$ order polynomial fit
+      \item $(Q-1)$ order polynomial fit
     \end{itemize}
 \end{columns}
 \end{frame}
@@ -276,10 +269,15 @@
    \centering
 \column{0.3\textwidth}
    \centering
-    \includegraphics[width=1\textwidth]{CylinderPerturbations}
+    \includegraphics[width=0.7\textwidth]{CylinderPerturbations}
 \column{0.3\textwidth}
    \centering
 \end{columns}
+\begin{itemize}
+\item Assume spike height is uniformly distributed between limits shown
+\item Re = 100
+\item Output = wake POD modes, DMD eigenvalues
+\end{itemize}
 \end{frame}
 \begin{frame}
 \frametitle{Range of Flow Behavior}
@@ -369,6 +367,20 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
     \includegraphics[width=0.9\textwidth]{DMDMode3} \\
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
 \end{columns}
+\end{frame}
+\begin{frame}
+\frametitle{Conclusions}
+\label{sec-3-6}
+
+\begin{itemize}
+\item Uncertainty quantification techniques provide a fast, efficient, and
+  accurate methodology for quantifying how low-dimensional models
+  change with parametric uncertainty
+\begin{itemize}
+\item POD modes
+\item DMD modes/eigenvalues
+\end{itemize}
+\end{itemize}
 \end{frame}
 
 \end{document}

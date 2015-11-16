@@ -51,18 +51,15 @@
 ** Motivation
 - Low-dimensional modeling is a useful method for examining high-dimensional data
   - Proper Orthogonal Decomposition (POD)
-    - Data compression
-    - Dominant spatial features
-    - Inexpensive models
   - Dynamic Mode Decomposition (DMD)
-    - Linear description of dynamical system
-    - Spatial modes + frequencies
+  - Identify inexpensive models
+  - Identify dominant system dynamics
 - Uncertainty quantification is a useful method for investigating statistical variations
   - Polynomial Chaos Expansions (PCE)
-    - Assumes /a-priori/ probabilistic knowledge of uncertainty
-    - Efficient sampling algorithm
-    - Accurate surrogate model
-- *Can we investigate statistical variations in low-dimensional models efficiently/accurately?*
+  - Efficient algorithms for exploring uncertain parameter space
+  - Accurate surrogate model
+- *Can we investigate statistical variations in low-dimensional models
+  efficiently/accurately using uncertainty quantification tools?*
 
 ** Applications
 - POD Galerkin Models of Fluid Flows
@@ -70,62 +67,55 @@
     - Collect data from simulations/experiments
     - Calculate POD of output data
     - Project governing flow equations onto POD modes
+  - Performance of models is sensitive to parametric uncertainty/variations
 - DMD Analysis of Fluid Flows
   - Determine linear modes/frequencies describing flow behavior
-- Sensitive to parametric variations/uncertainties
+  - Spatial modes and frequencies can change with parametric uncertainty
+- Examples of parametric variations/uncertainties
   - Physical parameters (eg. Reynolds number)
   - Boundary conditions
-  - Sensor noise
 
 * Methodology
+** Background
+- Proper Orthogonal Decomposition (POD)
+  - Data compression, dominant spatial features
+  - Modes are eigenvectors of the dataset covariance matrix
+  - Modes describe dataset better than any other linear basis
+- Dynamic Mode Decomposition (DMD)
+  - Describe dataset as linear dynamical system
+  - Spatial modes + (frequencies, growth/decay rates)
+- Polynomial Chaos Expansions (PCE)
+  - Method for quantifying parametric uncertainty efficiently
+  - Spectral method in probability space
+  - Expand output in terms of basis polynomial functions of random variables
 ** Methodology
+*Quantify Uncertain Input*
 - Identify source of uncertainty
   - Physical parameters (eg. Reynolds number)
   - Boundary conditions
-  - Sensor noise
 - Write a probabilistic description of uncertainty (ie. PDF)
+*Explore Uncertain Parameter Space*
 - Utilize efficient sampling of probability space
   - Quadrature nodes corresponding to a spectral basis
 - Collect simulation data using discrete points in probability space
   - Immersed boundary projection method (IBPM) code
+*Quantify Uncertain Output*
 - Quantify uncertainty in outputs
   - POD modes
   - DMD modes
   - DMD eigenvalues
 ** Polynomial Chaos Expansions (PCE)
-- *Polynomial Chaos Framework* [fn:XiuBook]
-  - Let $\bv{Z} = (Z_1 \ldots Z_d)$ be $d$ random variables with PDF
-    $\rho(\bv{Z})$ that parameterize ice
-  - Let $\lbrace \Phi_k \rbrace$ denote the set of polynomials
-    which are orthogonal w.r.t. $\rho(\bv{Z})$
-  - Let $y(\bv{Z})$ denote the mapping from $\bv{Z}$ to an aerodynamic
-    performance metric
-- *Probabilistic Collocation Method:*
-  - /Representation/ 
-    \begin{equation*}
-      y(\bv{Z}) \approx \sum_{|i|=0}^N y_i \Phi_i(\bv{Z})
-    \end{equation*}
-  - /Orthonormality/ 
-    \begin{equation*}
-    \begin{aligned}
-      \ip{f}{g} &= \int_{\Gamma} f(\bv{z})g(\bv{z}) \rho(\bv{z}) d\bv{z} \\
-      \ip{\Phi_i}{\Phi_j} &= \delta_{ij}
-    \end{aligned}
-    \end{equation*}
-  - /Quadrature/ 
-    \begin{equation*}
-      y_k = \ip{y}{\Phi_k} \approx \sum_{i=0}^{Q}
-    y(\bv{Z}^{(k)}) \Phi_k(\bv{Z}^{(k)}) w_k
-    \end{equation*}
-[fn:XiuBook] Xiu D. /Numerical Methods for Stochastic Computations: A
-Spectral Method Approach/. Princeton University Press, 2010.
-
-** Polynomial Chaos Expansions (PCE)
+- We have an uncertain parameter $\xi = \mathcal{U}[-1,1]$ which maps to output $y(\xi)$
+- What is the distribution of $y(\xi)$?
 #+begin_latex
+\centering
+\begin{equation*}
+y(\xi) = a\xi^3 + b\xi^2 + c\xi + d
+\end{equation}
 \begin{figure}[ht]
 \centering
 \begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.9\textwidth]{MCSampling} \\
+\includegraphics[width=0.7\textwidth]{MCSampling} \\
 \centering
 \textbf{Monte Carlo} \\
 \begin{equation*}
@@ -133,7 +123,7 @@ Spectral Method Approach/. Princeton University Press, 2010.
 \end{equation}
 \end{minipage}
 \begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.9\textwidth]{PCESampling} \\
+\includegraphics[width=0.7\textwidth]{PCESampling} \\
 \centering
 \textbf{Polynomial Chaos}
 \begin{equation*}
@@ -144,13 +134,13 @@ Spectral Method Approach/. Princeton University Press, 2010.
 \begin{columns}[c]
   \column{0.5\textwidth}
       \begin{itemize}
-      \item Draw random samples from distribution
+      \item Draw random samples
       \item Function exists at discrete points
     \end{itemize}
   \column{0.5\textwidth}
     \begin{itemize}
       \item Use $Q$ quadrature points
-      \item Construct $(Q-1)$ order polynomial fit
+      \item $(Q-1)$ order polynomial fit
     \end{itemize}
 \end{columns}
 #+end_latex
@@ -192,11 +182,14 @@ Spectral Method Approach/. Princeton University Press, 2010.
    \centering
 \column{0.3\textwidth}
    \centering
-    \includegraphics[width=1\textwidth]{CylinderPerturbations}
+    \includegraphics[width=0.7\textwidth]{CylinderPerturbations}
 \column{0.3\textwidth}
    \centering
 \end{columns}
 #+end_latex
+- Assume spike height is uniformly distributed between limits shown
+- Re = 100
+- Output = wake POD modes, DMD eigenvalues
 
 ** Range of Flow Behavior
 #+begin_latex
@@ -267,3 +260,9 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
 \end{columns}
 #+end_latex
+** Conclusions
+- Uncertainty quantification techniques provide a fast, efficient, and
+  accurate methodology for quantifying how low-dimensional models
+  change with parametric uncertainty
+  - POD modes
+  - DMD modes/eigenvalues
