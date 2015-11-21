@@ -49,34 +49,63 @@
 
 * Introduction
 ** Motivation
-- Low-dimensional modeling is a useful method for examining high-dimensional data
-  - Proper Orthogonal Decomposition (POD)
-  - Dynamic Mode Decomposition (DMD)
-  - Identify inexpensive models
-  - Identify dominant system dynamics
-- Uncertainty quantification is a useful method for investigating statistical variations
-  - Polynomial Chaos Expansions (PCE)
-  - Efficient algorithms for exploring uncertain parameter space
-  - Accurate surrogate model
-- *Can we investigate statistical variations in low-dimensional models
-  efficiently/accurately using uncertainty quantification tools?*
-
-** Applications
-- POD Galerkin Models of Fluid Flows
-  - Computationally-inexpensive model 
-    - Collect data from simulations/experiments
-    - Calculate POD of output data
-    - Project governing flow equations onto POD modes
-  - Performance of models is sensitive to parametric uncertainty/variations
-- DMD Analysis of Fluid Flows
-  - Determine linear modes/frequencies describing flow behavior
-  - Spatial modes and frequencies can change with parametric uncertainty
-- Examples of parametric variations/uncertainties
-  - Physical parameters (eg. Reynolds number)
+- Many fluid systems have uncertainties associated with them
+  - Governing parameters
   - Boundary conditions
+- Wing icing [fn:Broeren][fn:Addy]
+#+begin_latex
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=1\textwidth]{SampleIceShapes} \\
+\centering
+\textbf{Broeren, 2013} \\
+\end{minipage}
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=1\textwidth]{Dataset} \\
+\centering
+\textbf{Addy, 2000}
+\end{minipage}
+\end{figure}
+#+end_latex
+[fn:Broeren] Broeren et. al. /Swept-Wing Ice Accretion Characterization and Aerodynamics/. AIAA 2013-2824.
+[fn:Addy] Addy, H. E. /Ice Accretions and Icing Effects for Modern Airfoils/. NASA TP 2000-210031.
+
+** Motivation
+- Many fluid systems have uncertainties associated with them
+  - Governing parameters
+  - Boundary conditions
+- Airplane cargo hold fires [fn:DeGennaro]
+#+begin_latex
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\movie[width=0.9\textwidth,height=0.66\textwidth,poster,autostart,loop,borderwidth]{}{FireColdCenter.avi} \\
+\centering
+\textbf{Colder Source} \\
+\end{minipage}
+\begin{minipage}[b]{0.45\linewidth}
+\movie[width=0.9\textwidth,height=0.66\textwidth,poster,autostart,loop,borderwidth]{}{FireHotCenter.avi} \\
+\centering
+\textbf{Hotter Source}
+\end{minipage}
+\end{figure}
+#+end_latex
+
+[fn:DeGennaro] DeGennaro, Lohry et. al. /Uncertainty Quantification for Cargo Hold Fires/. To appear at AIAA Scitech 2016.
+** Motivation
+*Goal: apply uncertainty quantification tools to low-dimensional models*
+ - Understand statistical variations in flow with parameters
+*Potential applications*
+ - Investigate statistical variations in spatial structures and dynamics
+    - POD modes, DMD modes
+    - DMD eigenvalues
+ - POD Galerkin models
+    - Sensitive to parametric variation/uncertainty
+
 
 * Methodology
-** Background
+** Background: Low-Dimensional Modeling
 - Proper Orthogonal Decomposition (POD)
   - Data compression, dominant spatial features
   - Modes are eigenvectors of the dataset covariance matrix
@@ -84,10 +113,62 @@
 - Dynamic Mode Decomposition (DMD)
   - Describe dataset as linear dynamical system
   - Spatial modes + (frequencies, growth/decay rates)
+#+begin_latex
+\begin{columns}[c]
+\column{0.5\textwidth}
+   \centering
+    \textbf{Cylinder, Re = 100}
+    \movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{CylinderRe100.mp4}
+\column{0.5\textwidth}
+   \centering
+    \textbf{POD/DMD Modes} \\
+    \includegraphics[width=0.9\textwidth]{CylinderRe100POD1} \\
+    \includegraphics[width=0.9\textwidth]{CylinderRe100POD2}
+\end{columns}
+#+end_latex
+
+** Background: Polynomial Chaos Expansions (PCE)
 - Polynomial Chaos Expansions (PCE)
   - Method for quantifying parametric uncertainty efficiently
   - Spectral method in probability space
   - Expand output in terms of basis polynomial functions of random variables
+#+begin_latex
+\begin{equation*}
+\begin{aligned}
+f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
+\langle f , g \rangle &= \int_{\Gamma} f(\xi) g(\xi) \rho(\xi) d\xi \quad , \quad \langle \phi_i , \phi_j \rangle = \delta_{ij}
+\end{aligned}
+\end{equation}
+\fontsize{9}\selectfont
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles used later
+
+\tikzstyle{sensor}=[draw, fill=blue!20, text width=5em, 
+    text centered, minimum height=2.5em,drop shadow]
+\tikzstyle{ann} = [above, text width=5em, text centered]
+\tikzstyle{wa} = [sensor, text width=10em, fill=blue!20, 
+    minimum height=7em, rounded corners, drop shadow]
+
+% Define distances for bordering
+\def\blockdist{2.3}
+\def\edgedist{2.5}
+
+\begin{tikzpicture}
+    \node (CleanAirfoil) [wa]  {\includegraphics[width=0.9\textwidth]{ExamplePDF}\\\textbf{Input}};
+    \path (CleanAirfoil)+(4,0) node (FlowSolver) [wa] {\textbf{Computation/}\\\textbf{Experiment}};
+    \path (FlowSolver)+(4,0) node (Droplet) [wa] {\includegraphics[width=0.9\textwidth]{ExamplePDF2}\\\textbf{Output}};
+
+    \path [draw, ->, thick] (CleanAirfoil.east) |- node [right] {} (FlowSolver.west);
+    \path [draw, ->, thick] (FlowSolver.east) -- node [right] {} (Droplet.west);
+            
+\end{tikzpicture}
+
+#+end_latex
+
 ** Methodology
 *Quantify Uncertain Input*
 - Identify source of uncertainty
@@ -104,60 +185,6 @@
   - POD modes
   - DMD modes
   - DMD eigenvalues
-** Polynomial Chaos Expansions (PCE)
-- We have an uncertain parameter $\xi = \mathcal{U}[-1,1]$ which maps to output $y(\xi)$
-- What is the distribution of $y(\xi)$?
-#+begin_latex
-\centering
-\begin{equation*}
-y(\xi) = a\xi^3 + b\xi^2 + c\xi + d
-\end{equation}
-\begin{figure}[ht]
-\centering
-\begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.7\textwidth]{MCSampling} \\
-\centering
-\textbf{Monte Carlo} \\
-\begin{equation*}
-  y \approx \delta(\xi - \xi_k)
-\end{equation}
-\end{minipage}
-\begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=0.7\textwidth]{PCESampling} \\
-\centering
-\textbf{Polynomial Chaos}
-\begin{equation*}
-  y \approx \sum_{i}^{Q} c_i \psi_i(\xi)
-\end{equation}
-\end{minipage}
-\end{figure}
-\begin{columns}[c]
-  \column{0.5\textwidth}
-      \begin{itemize}
-      \item Draw random samples
-      \item Function exists at discrete points
-    \end{itemize}
-  \column{0.5\textwidth}
-    \begin{itemize}
-      \item Use $Q$ quadrature points
-      \item $(Q-1)$ order polynomial fit
-    \end{itemize}
-\end{columns}
-#+end_latex
-
-** Polynomial Chaos Expansions (PCE)
-#+begin_latex
-\begin{columns}[c]
-  \column{0.5\textwidth}
-    \centering
-    \includegraphics[width=0.9\textwidth]{MonteCarlo} \\
-    \bf{Monte Carlo Sampling}
-  \column{0.5\textwidth}
-    \centering
-    \includegraphics[width=0.9\textwidth]{QuadraturePoints} \\
-    {\bf Quadrature Sampling Grid}
-\end{columns}
-#+end_latex
 
 * Example: Cylinder Flow
 ** Setup
@@ -212,6 +239,30 @@ y(\xi) = a\xi^3 + b\xi^2 + c\xi + d
     \includegraphics[width=0.9\textwidth]{PerturbRp95Re100POD3}
 \end{columns}
 #+end_latex
+** Query the Surrogate
+#+begin_latex
+\begin{columns}[c]
+\column{0.5\textwidth}
+\centering
+\includegraphics[width=0.95\textwidth]{POD2CompareInterp1} \\
+\includegraphics[width=0.95\textwidth]{POD2CompareInterp2} \\
+\includegraphics[width=0.95\textwidth]{POD2CompareInterp3} \\
+\includegraphics[width=0.95\textwidth]{POD2CompareInterp4}
+\column{0.5\textwidth}
+\centering
+\begin{itemize}
+ \item{Can query the surrogate PCE model at different spike heights}
+ \begin{itemize}
+   \item{Height = 0.14}
+   \item{Height = 0.36}
+   \item{Height = 0.63}
+   \item{Height = 0.86}
+ \end{itemize}
+ \item{Behavior consistent with simulations}
+\end{itemize}
+\end{columns}
+#+end_latex
+
 ** Statistical Variance in Modes
 \centering
 \includegraphics[width=0.5\textwidth]{VariancePOD1} \\
@@ -260,9 +311,16 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
 \end{columns}
 #+end_latex
+
+- Output is the imaginary part of DMD eigenvalues
+- Histograms are based on 10,000 Monte Carlo samples of the PCE surrogate
+- Modest deformation of uniform distribution for all frequencies
 ** Conclusions
 - Uncertainty quantification techniques provide a fast, efficient, and
   accurate methodology for quantifying how low-dimensional models
   change with parametric uncertainty
   - POD modes
   - DMD modes/eigenvalues
+- Further research
+  - Multiple parameters
+  - Apply to POD Galerkin models
