@@ -29,8 +29,8 @@ params = {
     #'axes.labelsize': 30,
     #'text.fontsize': 40,
     #'legend.fontsize': 20,
-    'xtick.labelsize': 40,
-    'ytick.labelsize': 40,             
+    'xtick.labelsize': 20,
+    'ytick.labelsize': 20,             
     'figure.figsize':fig_size,
     #'figure.markersize': 50}
 }
@@ -73,12 +73,12 @@ def flipYSnapshot(Z,nx,ny):
 # **********************************************************
 
 # Parameters for runs
-basedir = "PerturbedCylinder/";
+basedir = "../";
 #Re = [52.3455, 61.5383, 75, 88.4617, 97.6545];
 #endPts = [50,100];
 #IC = [58000, 28000, 30000, 26000, 28000];
 IC = [8000, 8000, 8000, 8000, 8000];
-perturb = [82.111, 90.3844, 102.5, 114.6156, 122.889];
+perturb = [84.2219, 100.7689, 125.0, 149.2311, 165.7781];
 Xnew = np.array;
 iter = 0;
 runs = np.size(perturb);
@@ -86,7 +86,7 @@ times = 100;
 samp = 10;
 DT = 0.02*samp;
 snapshots = runs*times;
-LoadRead = "LOAD";
+LoadRead = "READ";
 # Either read data, or load from file
 if LoadRead == "LOAD":
     for i in range(0,runs):
@@ -121,6 +121,34 @@ elif LoadRead == "READ":
     data = readPltData(FileName);
 nx = data.nx; ny = data.ny;
 sizeX = np.size(X,0);
+
+# **********************************************************
+# Cut out the cylinder from data (optional)
+# **********************************************************
+
+# Read example (just to load XY axes)
+filename = "CylInitRe75/ibpm30000.plt";
+data = IBPMData();
+data = readPltData(filename);
+# Cut out cylinder
+Xgrid = np.zeros(data.nx*data.ny);
+Ygrid = np.zeros(data.nx*data.ny);
+Xgrid[:] = data.X;
+Ygrid[:] = data.Y;
+ind = np.where(Xgrid > 0.5);
+ind = np.squeeze(ind);
+sizeX = np.size(ind);
+Z = np.zeros([sizeX,snapshots]);
+for i in range(0,snapshots):
+    for j in range(0,sizeX):
+        Z[j,i] = X[ind[j],i];
+XX = np.zeros(sizeX);
+YY = np.zeros(sizeX);
+for i in range(0,sizeX):
+    XX[i] = Xgrid[ind[i]];
+    YY[i] = Ygrid[ind[i]];
+X = Z; del Z;
+
 
 # **********************************************************
 # Global POD, UQ on DMD eigenvalues/vectors
@@ -252,11 +280,10 @@ for i in range(0,sizeX):
         VariancePOD[i,j] += np.sum(np.power(LEGcoeffPOD[i,j,1:Q],2));
 # Compute reconstructions
 REC = np.zeros((sizeX));
-mode = 0;
-xi = xiQ[4];
+mode = 2;
 for i in range(0,sizeX):
     for j in range(0,Q):
-        REC[i] += LEGcoeffPOD[i,mode,j]*Legendre(xi,j);
+        REC[i] += LEGcoeffPOD[i,mode,j]*Legendre(0.72235,j);
 
 # Wait for user to manually end program
 _ = raw_input("Press [enter] to continue.");

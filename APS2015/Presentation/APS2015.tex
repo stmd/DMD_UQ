@@ -1,4 +1,4 @@
-% Created 2015-11-20 Fri 19:22
+% Created 2015-11-23 Mon 15:57
 \documentclass[9pt]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -89,19 +89,14 @@
 \item Wing icing \footnote{Broeren et. al. \emph{Swept-Wing Ice Accretion Characterization and Aerodynamics}. AIAA 2013-2824.
  }\textsuperscript{,}\,\footnote{Addy, H. E. \emph{Ice Accretions and Icing Effects for Modern Airfoils}. NASA TP 2000-210031.
  }
+\begin{itemize}
+\item Ice shape on leading edge of airfoil varies with physical conditions
+\end{itemize}
 \end{itemize}
 \begin{figure}[ht]
 \centering
-\begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=1\textwidth]{SampleIceShapes} \\
-\centering
-\textbf{Broeren, 2013} \\
-\end{minipage}
-\begin{minipage}[b]{0.45\linewidth}
-\includegraphics[width=1\textwidth]{Dataset} \\
-\centering
-\textbf{Addy, 2000}
-\end{minipage}
+\includegraphics[width=0.7\textwidth]{SampleIceShapes} \\
+\textbf{Broeren, 2013}
 \end{figure}
 \end{frame}
 \begin{frame}
@@ -116,6 +111,9 @@
 \end{itemize}
 \item Airplane cargo hold fires \footnote{DeGennaro, Lohry et. al. \emph{Uncertainty Quantification for Cargo Hold Fires}. To appear at AIAA Scitech 2016.
  }
+\begin{itemize}
+\item Fire source location, temperature can be uncertain
+\end{itemize}
 \end{itemize}
 \begin{figure}[ht]
 \centering
@@ -137,25 +135,25 @@
 
 \textbf{Goal: apply uncertainty quantification tools to low-dimensional models}
 \begin{itemize}
-\item Understand statistical variations in flow with parameters
-\end{itemize}
-\textbf{Potential applications}
-\begin{itemize}
 \item Investigate statistical variations in spatial structures and dynamics
 \begin{itemize}
 \item POD modes, DMD modes
 \item DMD eigenvalues
 \end{itemize}
+\end{itemize}
+\textbf{Potential applications}
+\begin{itemize}
+\item Develop low-dimensional models accurate for range of parameter uncertainty
 \item POD Galerkin models
 \begin{itemize}
 \item Sensitive to parametric variation/uncertainty
 \end{itemize}
 \end{itemize}
 \end{frame}
-\section{Methodology}
+\section{Background}
 \label{sec-2}
 \begin{frame}
-\frametitle{Background: Low-Dimensional Modeling}
+\frametitle{Low-Dimensional Modeling}
 \label{sec-2-1}
 
 \begin{itemize}
@@ -171,20 +169,47 @@
 \item Spatial modes + (frequencies, growth/decay rates)
 \end{itemize}
 \end{itemize}
-\begin{columns}[c]
-\column{0.5\textwidth}
-   \centering
-    \textbf{Cylinder, Re = 100}
-    \movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{CylinderRe100.mp4}
-\column{0.5\textwidth}
-   \centering
-    \textbf{POD/DMD Modes} \\
-    \includegraphics[width=0.9\textwidth]{CylinderRe100POD1} \\
-    \includegraphics[width=0.9\textwidth]{CylinderRe100POD2}
-\end{columns}
+%\begin{columns}[c]
+%\column{0.5\textwidth}
+%   \centering
+%    \textbf{Cylinder, Re = 100}
+%    \movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{CylinderRe100.mp4}
+%\column{0.5\textwidth}
+%   \centering
+%    \textbf{POD/DMD Modes} \\
+%    \includegraphics[width=0.9\textwidth]{CylinderRe100POD1} \\
+%    \includegraphics[width=0.9\textwidth]{CylinderRe100POD2}
+%\end{columns}
+
+
+
+\fontsize{9}\selectfont
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles used later
+
+\tikzstyle{basic}=[draw, fill=blue!20, text width=5em, 
+    text centered, minimum height=2.5em,drop shadow]
+\tikzstyle{mode} = [basic, text width=10em, fill=blue!20, 
+    minimum height=4em, rounded corners, drop shadow]
+
+% Define distances for bordering
+\def\blockdist{2.3}
+\def\edgedist{2.5}
+\centering
+\begin{tikzpicture}
+    \node (Simulation) [mode]  {\movie[width=0.9\textwidth,height=0.3\textwidth,poster,autostart,loop,borderwidth]{}{CylinderRe100.mp4}\\[1em]\textbf{Cylinder: Re = 100}};
+    \path (Simulation)+(4,0) node (POD1) [mode] {\includegraphics[width=0.9\textwidth]{CylinderRe100POD1}\\[1em] \includegraphics[width=0.9\textwidth]{CylinderRe100POD2}\\[1em]\textbf{POD/DMD Modes}};
+
+    \path [draw, ->, thick] (Simulation.east) |- node [right] {} (POD1.west);
+
+\end{tikzpicture}
 \end{frame}
 \begin{frame}
-\frametitle{Background: Polynomial Chaos Expansions (PCE)}
+\frametitle{Polynomial Chaos Expansions (PCE)}
 \label{sec-2-2}
 
 \begin{itemize}
@@ -197,8 +222,8 @@
 \end{itemize}
 \begin{equation*}
 \begin{aligned}
-f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
-\langle f , g \rangle &= \int_{\Gamma} f(\xi) g(\xi) \rho(\xi) d\xi \quad , \quad \langle \phi_i , \phi_j \rangle = \delta_{ij}
+f(\xi) &\approx \sum_{i}^N a_i \psi_i(\xi) \\
+\langle f , g \rangle &= \int_{\Gamma} f(\xi) g(\xi) \rho(\xi) d\xi \quad , \quad \langle \psi_i , \psi_j \rangle = \delta_{ij}
 \end{aligned}
 \end{equation}
 \fontsize{9}\selectfont
@@ -230,38 +255,36 @@ f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
 \end{tikzpicture}
 \end{frame}
 \begin{frame}
-\frametitle{Methodology}
+\frametitle{Polynomial Chaos Expansions (PCE)}
 \label{sec-2-3}
 
-\textbf{Quantify Uncertain Input}
+\begin{figure}[ht]
+\centering
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=0.7\textwidth]{MonteCarlo} \\
+\centering
+\textbf{Monte Carlo} \\
+\begin{equation*}
+  y \approx \delta(\xi - \xi_k)
+\end{equation} \\
 \begin{itemize}
-\item Identify source of uncertainty
+\item Draw random samples
+\item Data exist at discrete points
+\end{itemize}
+\end{minipage}
+\begin{minipage}[b]{0.45\linewidth}
+\includegraphics[width=0.7\textwidth]{QuadraturePoints} \\
+\centering
+\textbf{Polynomial Chaos}
+\begin{equation*}
+  y \approx \sum_{i}^{Q} c_i \psi_i(\xi)
+\end{equation} \\
 \begin{itemize}
-\item Physical parameters (eg. Reynolds number)
-\item Boundary conditions
+\item Take data at collocation points
+\item Construct global surrogate
 \end{itemize}
-\item Write a probabilistic description of uncertainty (ie. PDF)
-\end{itemize}
-\textbf{Explore Uncertain Parameter Space}
-\begin{itemize}
-\item Utilize efficient sampling of probability space
-\begin{itemize}
-\item Quadrature nodes corresponding to a spectral basis
-\end{itemize}
-\item Collect simulation data using discrete points in probability space
-\begin{itemize}
-\item Immersed boundary projection method (IBPM) code
-\end{itemize}
-\end{itemize}
-\textbf{Quantify Uncertain Output}
-\begin{itemize}
-\item Quantify uncertainty in outputs
-\begin{itemize}
-\item POD modes
-\item DMD modes
-\item DMD eigenvalues
-\end{itemize}
-\end{itemize}
+\end{minipage}
+\end{figure}
 \end{frame}
 \section{Example: Cylinder Flow}
 \label{sec-3}
@@ -270,28 +293,21 @@ f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
 \label{sec-3-1}
 
 \begin{columns}[c]
-\column{0.3\textwidth}
+\column{0.20\textwidth}
+   \centering
+    \includegraphics[width=1\textwidth]{CylinderPerturbations}   
+\column{0.25\textwidth}
    \centering
     \textbf{Small Spike} \\
     \includegraphics[width=1\textwidth]{PerturbSmallHorn}
-\column{0.3\textwidth}
+\column{0.25\textwidth}
    \centering
     \textbf{Medium Spike} \\
     \includegraphics[width=1\textwidth]{PerturbMediumHorn}
-\column{0.3\textwidth}
+\column{0.25\textwidth}
    \centering
     \textbf{Large Spike} \\
     \includegraphics[width=1\textwidth]{PerturbBigHorn}
-\end{columns}
-
-\begin{columns}[c]
-\column{0.3\textwidth}
-   \centering
-\column{0.3\textwidth}
-   \centering
-    \includegraphics[width=0.7\textwidth]{CylinderPerturbations}
-\column{0.3\textwidth}
-   \centering
 \end{columns}
 \begin{itemize}
 \item Assume spike height is uniformly distributed between limits shown
@@ -300,8 +316,41 @@ f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
 \end{itemize}
 \end{frame}
 \begin{frame}
-\frametitle{Range of Flow Behavior}
+\frametitle{Methodology}
 \label{sec-3-2}
+
+
+\fontsize{9}\selectfont
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+% Define block styles used later
+
+\tikzstyle{sensor}=[draw, fill=blue!20, text width=5em, 
+    text centered, minimum height=2.5em,drop shadow]
+\tikzstyle{ann} = [above, text width=5em, text centered]
+\tikzstyle{wa} = [sensor, text width=10em, fill=blue!20, 
+    minimum height=7em, rounded corners, drop shadow]
+
+% Define distances for bordering
+\def\blockdist{2.3}
+\def\edgedist{2.5}
+
+\begin{tikzpicture}
+    \node (CleanAirfoil) [wa]  {\includegraphics[width=0.9\textwidth]{CylinderPerturbations}\\\vspace{0.25cm}\textbf{Spike Height}\\ $\xi = \mathcal{U}\lbrace 0,1\rbrace$};
+    \path (CleanAirfoil)+(4,0) node (FlowSolver) [wa] {\textbf{Computation (IBPM)}\\\includegraphics[width=0.8\textwidth]{QuadraturePoints1D}};
+    \path (FlowSolver)+(4,0) node (Droplet) [wa] {\includegraphics[width=0.9\textwidth]{POD2CompareInterp1}\\\vspace{0.25cm}\textbf{POD Modes}\\\vspace{0.2cm} $\phi(x,\xi) \approx \sum_i a_i(x) \psi_i(\xi)$};
+
+    \path [draw, ->, thick] (CleanAirfoil.east) |- node [right] {} (FlowSolver.west);
+    \path [draw, ->, thick] (FlowSolver.east) -- node [right] {} (Droplet.west);
+            
+\end{tikzpicture}
+\end{frame}
+\begin{frame}
+\frametitle{Range of Flow Behavior}
+\label{sec-3-3}
 
 \begin{columns}[c]
 \column{0.5\textwidth}
@@ -323,43 +372,52 @@ f(\xi) &\approx \sum_{i}^N a_i \phi_i(\xi) \\
 \end{columns}
 \end{frame}
 \begin{frame}
-\frametitle{Query the Surrogate}
-\label{sec-3-3}
+\frametitle{Explore Parameter Space}
+\label{sec-3-4}
 
 \begin{columns}[c]
 \column{0.5\textwidth}
 \centering
-\includegraphics[width=0.95\textwidth]{POD2CompareInterp1} \\
-\includegraphics[width=0.95\textwidth]{POD2CompareInterp2} \\
-\includegraphics[width=0.95\textwidth]{POD2CompareInterp3} \\
-\includegraphics[width=0.95\textwidth]{POD2CompareInterp4}
+\texbf{Height = 14$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD2CompareInterp1} \\
+\texbf{Height = 36$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD2CompareInterp2} \\
+\texbf{Height = 86$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD2CompareInterp4}
 \column{0.5\textwidth}
 \centering
-\begin{itemize}
- \item{Can query the surrogate PCE model at different spike heights}
- \begin{itemize}
-   \item{Height = 0.14}
-   \item{Height = 0.36}
-   \item{Height = 0.63}
-   \item{Height = 0.86}
- \end{itemize}
- \item{Behavior consistent with simulations}
-\end{itemize}
+\texbf{Height = 14$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD4CompareInterp1} \\
+\texbf{Height = 36$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD4CompareInterp2} \\
+\texbf{Height = 86$\%$}\\\vspace{-0.07cm}\includegraphics[width=0.95\textwidth]{POD4CompareInterp4}
 \end{columns}
+\begin{itemize}
+\item Range from almost symmetric modes similar to cylinder to asymmetric perturbations
+\end{itemize}
 \end{frame}
 \begin{frame}
 \frametitle{Statistical Variance in Modes}
-\label{sec-3-4}
+\label{sec-3-5}
 
+\begin{columns}[c]
+\column{0.5\textwidth}
 \centering
-\includegraphics[width=0.5\textwidth]{VariancePOD1} \\
-\includegraphics[width=0.5\textwidth]{VariancePOD2} \\
-\includegraphics[width=0.5\textwidth]{VariancePOD3} \\
-\includegraphics[width=0.5\textwidth]{VariancePOD4} \\
+\textbf{POD Mode 2} \\
+\includegraphics[width=0.95\textwidth]{CylinderRe100POD2} \\
+\textbf{Statistical Variance} \\
+\includegraphics[width=0.95\textwidth]{VariancePOD2}
+\column{0.5\textwidth}
+\centering
+\textbf{POD Mode 3} \\
+\includegraphics[width=0.95\textwidth]{CylinderRe100POD3} \\
+\textbf{Statistical Variance} \\
+\includegraphics[width=0.95\textwidth]{VariancePOD3}
+\end{columns}
+\begin{itemize}
+\item Can statistically sample PCE surrogate
+\item Generate ensemble of cylinder spikes and associated POD modes
+\item Variance shows where POD modes are most affected by spike height
+\end{itemize}
 \end{frame}
 \begin{frame}
 \frametitle{Projection Error}
-\label{sec-3-5}
+\label{sec-3-6}
 
 \begin{itemize}
 \item Choose the $Q-1$ points halfway between $Q$ quadrature nodes
@@ -393,23 +451,26 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
 \end{frame}
 \begin{frame}
 \frametitle{DMD Eigenvalues}
-\label{sec-3-6}
+\label{sec-3-7}
 
 \begin{columns}[c]
 \column{0.3\textwidth}
    \centering
-    \textbf{Low Frequency} \\
+    \textbf{DMD Mode} \\
     \includegraphics[width=0.9\textwidth]{DMDMode1} \\
+    \textbf{Frequency Distribution} \\
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigSlowPDF}
 \column{0.3\textwidth}
    \centering
-    \textbf{Medium Frequency} \\
+    \textbf{DMD Mode} \\
     \includegraphics[width=0.9\textwidth]{DMDMode2} \\
+    \textbf{Frequency Distribution} \\
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigMediumPDF}
 \column{0.3\textwidth}
    \centering
-    \textbf{High Frequency} \\
+    \textbf{DMD Mode} \\
     \includegraphics[width=0.9\textwidth]{DMDMode3} \\
+    \textbf{Frequency Distribution} \\
     \includegraphics[width=0.9\textwidth]{PerturbDMDEigFastPDF}
 \end{columns}
 
@@ -421,7 +482,7 @@ N(Y) \equiv max(||Y(\xi_k) - \Phi(\xi_k)||_2) \quad , \quad k = 1...Q-1
 \end{frame}
 \begin{frame}
 \frametitle{Conclusions}
-\label{sec-3-7}
+\label{sec-3-8}
 
 \begin{itemize}
 \item Uncertainty quantification techniques provide a fast, efficient, and
